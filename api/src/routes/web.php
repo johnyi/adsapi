@@ -11,6 +11,14 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
+    // Messenger
+    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger'], function() use ($router) {
+        $router->post('{pageId}/webhook', 'WebhookController@index');
+        $router->get('{pageId}/webhook', 'WebhookController@verify');
+    });
+
+    // Marketing
+    $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing'], function() use ($router) {
+    });
 });
