@@ -2,9 +2,10 @@
 
 namespace App\Models\Facebook\Messenger;
 
-use GuzzleHttp\Client;
+use App\Models\Facebook\Messenger;
+use Log;
 
-class User
+class User extends Messenger
 {
     protected static $fields = [
         'first_name',
@@ -15,19 +16,20 @@ class User
         'gender',
     ];
 
-    protected $url;
-
-    protected $client;
-
-    public function __construct($psId, $accessToken)
+    public function profile($psId)
     {
-        $this->url = sprintf('https://graph.facebook.com/%s?fields=%s&access_token=%s', $psId, implode(',', self::$fields), $accessToken);
-        $this->client = new Client();
-    }
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'fields'       => implode(',', self::$fields),
+            ],
+        ];
 
-    public function profile()
-    {
-        $response = $this->client->request('GET', $this->url);
+        Log::info('before request');
+
+        $response = $this->client->request('GET', $psId, $options);
+
+        Log::info(json_encode($response));
 
         return json_decode($response->getBody()->getContents(), true);
     }

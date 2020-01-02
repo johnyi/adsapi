@@ -65,8 +65,8 @@ class WebhookController extends Controller
                                         $user['page_id'] = $pageId;
                                     }
 
-                                    $messengerUser = new MessengerUser($event['sender']['id'], $page['access_token']);
-                                    $profile = $messengerUser->profile();
+                                    $messengerUser = new MessengerUser($page['access_token']);
+                                    $profile = $messengerUser->profile($event['sender']['id']);
 
                                     $user['first_name'] = $profile['first_name'];
                                     $user['last_name'] = $profile['last_name'];

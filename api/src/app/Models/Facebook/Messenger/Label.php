@@ -2,79 +2,107 @@
 
 namespace App\Models\Facebook\Messenger;
 
-use GuzzleHttp\Client;
+use App\Models\Facebook\Messenger;
 
-class Label
+class Label extends Messenger
 {
-    protected $client;
-
-    protected $accessToken;
-
-    public function __construct($accessToken)
-    {
-        $this->client = new Client();
-        $this->accessToken = $accessToken;
-    }
-
     public function create($name)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/me/custom_labels?access_token=%s', $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+            'json'  => [
+                'name' => $name,
+            ],
+        ];
 
-        $response = $this->client->request('POST', $url, ['json' => ['name' => $name]]);
+        $response = $this->client->request('POST', 'me/custom_labels', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
     public function all()
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/me/custom_labels?fields=name&access_token=%s', $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'fields'       => 'name',
+            ],
+        ];
 
-        $response = $this->client->request('GET', $url);
+        $response = $this->client->request('GET', 'me/custom_labels', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
     public function get($labelId)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/%s?fields=name&access_token=%s', $labelId, $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'fields'       => 'name',
+            ],
+        ];
 
-        $response = $this->client->request('GET', $url);
+        $response = $this->client->request('GET', $labelId, $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
     public function delete($labelId)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/%s?access_token=%s', $labelId, $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+        ];
 
-        $response = $this->client->request('DELETE', $url);
+        $response = $this->client->request('DELETE', $labelId, $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function associateWithUser($labelId, $psId)
+    public function associateToUser($labelId, $psId)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/%s/label?access_token=%s', $labelId, $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+            'json'  => [
+                'user' => $psId,
+            ],
+        ];
 
-        $response = $this->client->request('POST', $url, ['json' => ['user' => $psId]]);
+        $response = $this->client->request('POST', $labelId . '/label', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
     public function getUserLabel($psId)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/%s/custom_labels?fields=name&access_token=%s', $psId, $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'fields'       => 'name',
+            ],
+        ];
 
-        $response = $this->client->request('GET', $url, ['json' => ['user' => $psId]]);
+        $response = $this->client->request('GET', $psId . '/custom_labels', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function deleteFromUser($psId)
+    public function deleteFromUser($labelId, $psId)
     {
-        $url = sprintf('https://graph.facebook.com/v5.0/%s/label?user=%s&access_token=%s', $psId, $this->accessToken);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'user'         => $psId,
+            ],
+        ];
 
-        $response = $this->client->request('DELETE', $url);
+        $response = $this->client->request('DELETE', $labelId . '/label', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }

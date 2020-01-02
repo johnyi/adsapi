@@ -2,14 +2,10 @@
 
 namespace App\Models\Facebook\Messenger;
 
-use GuzzleHttp\Client;
+use App\Models\Facebook\Messenger;
 
-class Message
+class Message extends Messenger
 {
-    protected $url;
-
-    protected $client;
-
     protected $messageType;
 
     protected $recipient;
@@ -21,12 +17,6 @@ class Message
     protected $notificationType;
 
     protected $tag;
-
-    public function __construct($accessToken)
-    {
-        $this->url = sprintf('https://graph.facebook.com/v5.0/me/messages?access_token=%s', $accessToken);
-        $this->client = new Client();
-    }
 
     public function setMessageType($messageType)
     {
@@ -45,13 +35,18 @@ class Message
 
     public function send()
     {
-        $data = [
-            'messaging_type' => $this->messageType,
-            'recipient'      => ['id' => $this->recipient],
-            'message'        => $this->message,
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+            'json'  => [
+                'messaging_type' => $this->messageType,
+                'recipient'      => ['id' => $this->recipient],
+                'message'        => $this->message,
+            ],
         ];
 
-        $response = $this->client->request('POST', $this->url, ['json' => $data]);
+        $response = $this->client->request('POST', 'me/messages', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }

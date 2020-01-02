@@ -2,35 +2,60 @@
 
 namespace App\Models\Facebook\Messenger;
 
-use GuzzleHttp\Client;
+use App\Models\Facebook\Messenger;
 
-class Profile
+class Profile extends Messenger
 {
     protected static $fields = [
-        'first_name',
-        'last_name',
-        'profile_pic',
-        'locale',
-        'timezone',
-        'gender',
+        'get_started',
+        'greeting',
+        'ice_breakers',
+        'persistent_menu',
+        'whitelisted_domains',
+        'account_linking_url',
+        'home_url',
     ];
-
-    protected $accessToken;
-
-    protected $url;
-
-    protected $client;
-
-    public function __construct($psId, $accessToken)
-    {
-        $this->accessToken = $accessToken;
-        $this->url = sprintf('https://graph.facebook.com/%s?fields=%s&access_token=%s', $psId, implode(',', self::$fields), $accessToken);
-        $this->client = new Client();
-    }
 
     public function get()
     {
-        $response = $this->client->request('GET', $this->url);
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+                'fields'       => implode(',', self::$fields),
+            ],
+        ];
+
+        $response = $this->client->request('GET', 'me/messenger_profile', $options);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function update($data)
+    {
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+            'json'  => $data,
+        ];
+
+        $response = $this->client->request('POST', 'me/messenger_profile', $options);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function delete($fields)
+    {
+        $options = [
+            'query' => [
+                'access_token' => $this->accessToken,
+            ],
+            'json'  => [
+                'fields' => $fields,
+            ],
+        ];
+
+        $response = $this->client->request('DELETE', 'me/messenger_profile', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
