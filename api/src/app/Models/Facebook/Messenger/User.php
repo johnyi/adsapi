@@ -3,7 +3,6 @@
 namespace App\Models\Facebook\Messenger;
 
 use App\Models\Facebook\Messenger;
-use Log;
 
 class User extends Messenger
 {
@@ -25,11 +24,7 @@ class User extends Messenger
             ],
         ];
 
-        Log::info('before request');
-
         $response = $this->client->request('GET', $psId, $options);
-
-        Log::info(json_encode($response));
 
         return json_decode($response->getBody()->getContents(), true);
     }

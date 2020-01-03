@@ -13,9 +13,16 @@
 
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
     // Messenger
-    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger'], function() use ($router) {
-        $router->post('{pageId}/webhook', 'WebhookController@index');
-        $router->get('{pageId}/webhook', 'WebhookController@verify');
+    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger/{pageId}'], function() use ($router) {
+        // Attachment
+        $router->post('attachment/upload', 'AttachmentController@upload');
+
+        // Message
+        $router->post('message/send', 'MessageController@send');
+
+        // Webhook
+        $router->post('webhook', 'WebhookController@index');
+        $router->get('webhook', 'WebhookController@verify');
     });
 
     // Marketing
