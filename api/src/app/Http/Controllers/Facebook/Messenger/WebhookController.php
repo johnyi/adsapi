@@ -56,23 +56,25 @@ class WebhookController extends MessengerController
                                 }
 
                                 // Save user
-                                $user = User::where('page_id', '=', $pageId)->where('ps_id', '=', $event['sender']['id'])->first();
-                                if (empty($user)) {
-                                    $user = new User();
-                                    $user['ps_id'] = $event['sender']['id'];
-                                    $user['page_id'] = $pageId;
+                                if ($event['sender']['id'] != $pageId) {
+                                    $user = User::where('page_id', '=', $pageId)->where('ps_id', '=', $event['sender']['id'])->first();
+                                    if (empty($user)) {
+                                        $user = new User();
+                                        $user['ps_id'] = $event['sender']['id'];
+                                        $user['page_id'] = $pageId;
+                                    }
+
+                                    $messengerUser = new MessengerUser($this->page['access_token']);
+                                    $profile = $messengerUser->profile($event['sender']['id']);
+
+                                    $user['first_name'] = $profile['first_name'];
+                                    $user['last_name'] = $profile['last_name'];
+                                    $user['profile_pic'] = $profile['profile_pic'];
+                                    $user['locale'] = $profile['locale'];
+                                    $user['timezone'] = $profile['timezone'];
+                                    $user['gender'] = $profile['gender'];
+                                    $user->save();
                                 }
-
-                                $messengerUser = new MessengerUser($this->page['access_token']);
-                                $profile = $messengerUser->profile($event['sender']['id']);
-
-                                $user['first_name'] = $profile['first_name'];
-                                $user['last_name'] = $profile['last_name'];
-                                $user['profile_pic'] = $profile['profile_pic'];
-                                $user['locale'] = $profile['locale'];
-                                $user['timezone'] = $profile['timezone'];
-                                $user['gender'] = $profile['gender'];
-                                $user->save();
 
                                 $message = new Message();
                                 $message['type'] = array_key_exists('is_echo', $event['message']) ? 'RESPONSE' : 'RECEIVE';

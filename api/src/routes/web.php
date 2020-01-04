@@ -21,6 +21,7 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         $router->get('insight', 'InsightController@index');
 
         // Message
+        $router->get('message', 'MessageController@index');
         $router->post('message/send', 'MessageController@send');
 
         // Profile
