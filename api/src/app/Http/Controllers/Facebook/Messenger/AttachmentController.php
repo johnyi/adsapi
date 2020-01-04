@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Facebook\Messenger;
 
 use App\Http\Controllers\Controller;
-use App\Models\Facebook\Messenger\Attachment as FacebookAttachment;
 use App\Models\Attachment;
+use App\Models\Facebook\Messenger\Attachment as FacebookAttachment;
 use App\Models\Page;
 use Illuminate\Http\Request;
-use Log;
 
 class AttachmentController extends Controller
 {
@@ -21,7 +20,7 @@ class AttachmentController extends Controller
         if (empty($page)) {
             return response()->json([
                 'code'    => -1,
-                'message' => 'Page不存在',
+                'message' => 'Page not exists',
             ], 400);
         }
 

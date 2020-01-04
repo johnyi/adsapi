@@ -20,7 +20,7 @@ class MessageController extends Controller
         if (empty($page)) {
             return response()->json([
                 'code'    => -1,
-                'message' => 'Page不存在',
+                'message' => 'Page not exists',
             ], 400);
         }
 

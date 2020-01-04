@@ -39,15 +39,6 @@ class Attachment extends Messenger
 
     public function uploadFromFile($filePath)
     {
-        $message = json_encode([
-            'attachment' => [
-                'type'    => $this->type,
-                'payload' => [
-                    'is_reusable' => true,
-                ],
-            ],
-        ]);
-
         $options = [
             'query'     => [
                 'access_token' => $this->accessToken,
@@ -55,7 +46,14 @@ class Attachment extends Messenger
             'multipart' => [
                 [
                     'name'     => 'message',
-                    'contents' => $message,
+                    'contents' => json_encode([
+                        'attachment' => [
+                            'type'    => $this->type,
+                            'payload' => [
+                                'is_reusable' => true,
+                            ],
+                        ],
+                    ]),
                 ],
                 [
                     'name'     => 'filedata',

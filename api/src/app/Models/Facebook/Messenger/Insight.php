@@ -13,7 +13,7 @@ class Insight extends Messenger
         'page_messages_reported_conversations_unique',
     ];
 
-    public function get($since = null, $until = null)
+    public function get($since, $until)
     {
         $options = [
             'query' => [
