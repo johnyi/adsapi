@@ -23,6 +23,11 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         // Message
         $router->post('message/send', 'MessageController@send');
 
+        // Profile
+        $router->get('profile', 'ProfileController@index');
+        $router->post('profile/update', 'ProfileController@update');
+        $router->post('profile/delete', 'ProfileController@delete');
+
         // Webhook
         $router->post('webhook', 'WebhookController@index');
         $router->get('webhook', 'WebhookController@verify');

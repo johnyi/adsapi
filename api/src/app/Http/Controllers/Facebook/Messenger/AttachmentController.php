@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Facebook\Messenger;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Facebook\MessengerController;
 use App\Models\Attachment;
 use App\Models\Facebook\Messenger\Attachment as FacebookAttachment;
-use App\Models\Page;
 use Illuminate\Http\Request;
 
-class AttachmentController extends Controller
+class AttachmentController extends MessengerController
 {
     public function upload(Request $request, string $pageId)
     {
@@ -16,21 +15,13 @@ class AttachmentController extends Controller
             'type' => 'required',
         ]);
 
-        $page = Page::where('page_id', '=', $pageId)->first();
-        if (empty($page)) {
-            return response()->json([
-                'code'    => -1,
-                'message' => 'Page not exists',
-            ], 400);
-        }
-
         $response = [];
 
         $type = $request->input('type');
         $url = $request->input('url');
         $file = $request->file('file');
 
-        $attachment = new FacebookAttachment($page['access_token']);
+        $attachment = new FacebookAttachment($this->page['access_token']);
         $attachment->setType($type);
 
         if (!empty($url)) {
