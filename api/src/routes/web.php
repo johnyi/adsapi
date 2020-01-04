@@ -17,6 +17,9 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         // Attachment
         $router->post('attachment/upload', 'AttachmentController@upload');
 
+        // Insight
+        $router->get('insight', 'InsightController@index');
+
         // Message
         $router->post('message/send', 'MessageController@send');
 

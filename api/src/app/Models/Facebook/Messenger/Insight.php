@@ -19,18 +19,12 @@ class Insight extends Messenger
             'query' => [
                 'access_token' => $this->accessToken,
                 'metric'       => implode(',', self::$metrics),
+                'since'        => $since,
+                'until'        => $until,
             ],
         ];
 
-        if (!empty($since)) {
-            $options['query']['since'] = $since;
-        }
-
-        if (!empty($until)) {
-            $options['query']['until'] = $until;
-        }
-
-        $response = $this->client->request('GET', 'insights', $options);
+        $response = $this->client->request('GET', 'me/insights', $options);
 
         return json_decode($response->getBody()->getContents(), true);
     }
