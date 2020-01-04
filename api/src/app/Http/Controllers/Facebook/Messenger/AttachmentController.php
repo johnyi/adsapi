@@ -9,6 +9,20 @@ use Illuminate\Http\Request;
 
 class AttachmentController extends MessengerController
 {
+    public function index(Request $request, string $pageId)
+    {
+        $limit = $request->input('limit', 50);
+
+        $attachments = Attachment::where('page_id', '=', $pageId)
+            ->orderBy('created_at', 'DESC')
+            ->paginate($limit);
+
+        return response()->json([
+            'total' => $attachments->total(),
+            'items' => $attachments->items(),
+        ]);
+    }
+
     public function upload(Request $request, string $pageId)
     {
         $this->validate($request, [
