@@ -24,8 +24,8 @@ class User extends Messenger
             ],
         ];
 
-        $response = $this->client->request('GET', $psId, $options);
+        $response = $this->client->get($psId, $options);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response->json();
     }
 }

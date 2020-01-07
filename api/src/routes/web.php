@@ -36,6 +36,7 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
     });
 
     // Marketing
-    $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing'], function() use ($router) {
+    $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing/{managerId}'], function() use ($router) {
+
     });
 });

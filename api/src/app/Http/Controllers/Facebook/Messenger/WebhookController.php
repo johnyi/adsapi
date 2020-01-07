@@ -8,7 +8,6 @@ use App\Models\Facebook\Messenger\Webhook;
 use App\Models\Message;
 use App\Models\MessageAttachment;
 use App\Models\MessageReferral;
-use App\Models\Page;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
@@ -18,8 +17,6 @@ class WebhookController extends MessengerController
 {
     public function index(Request $request, string $pageId)
     {
-        Log::info($request->all());
-
         if (!Webhook::validate($request->header('X-Hub-Signature'), file_get_contents('php://input'))) {
             die('message validation error');
         }

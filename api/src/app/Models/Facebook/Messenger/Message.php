@@ -46,8 +46,8 @@ class Message extends Messenger
             ],
         ];
 
-        $response = $this->client->request('POST', 'me/messages', $options);
+        $response = $this->client->post('me/messages', $options);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response->json();
     }
 }

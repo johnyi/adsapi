@@ -32,38 +32,32 @@ class Attachment extends Messenger
             ],
         ];
 
-        $response = $this->client->request('POST', 'me/message_attachments', $options);
+        $response = $this->client->post('me/message_attachments', $options);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response->json();
     }
 
     public function uploadFromFile($filePath)
     {
         $options = [
-            'query'     => [
+            'query' => [
                 'access_token' => $this->accessToken,
             ],
-            'multipart' => [
-                [
-                    'name'     => 'message',
-                    'contents' => json_encode([
-                        'attachment' => [
-                            'type'    => $this->type,
-                            'payload' => [
-                                'is_reusable' => true,
-                            ],
+            'body'  => [
+                'message'  => json_encode([
+                    'attachment' => [
+                        'type'    => $this->type,
+                        'payload' => [
+                            'is_reusable' => true,
                         ],
-                    ]),
-                ],
-                [
-                    'name'     => 'filedata',
-                    'contents' => fopen($filePath, 'r'),
-                ],
+                    ],
+                ]),
+                'filedata' => fopen($filePath, 'r'),
             ],
         ];
 
-        $response = $this->client->request('POST', 'me/message_attachments', $options);
+        $response = $this->client->post('me/message_attachments', $options);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response->json();
     }
 }

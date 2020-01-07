@@ -12,7 +12,7 @@ class Messenger
 
     public function __construct($accessToken)
     {
-        $this->client = new Client(['base_uri' => 'https://graph.facebook.com/v5.0/']);
+        $this->client = new Client(['base_url' => 'https://graph.facebook.com/v5.0/']);
         $this->accessToken = $accessToken;
     }
 }
