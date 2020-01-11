@@ -7,6 +7,7 @@ use App\Models\Facebook\Messenger;
 class User extends Messenger
 {
     protected static $fields = [
+        'name',
         'first_name',
         'last_name',
         'profile_pic',

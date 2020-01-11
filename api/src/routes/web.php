@@ -12,6 +12,10 @@
 */
 
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
+    // Auth
+    $router->get('auth/login', 'AuthController@login');
+    $router->get('auth/callback', 'AuthController@callback');
+
     // Messenger
     $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger/{pageId}'], function() use ($router) {
         // Attachment
@@ -37,6 +41,20 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
 
     // Marketing
     $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing/{managerId}'], function() use ($router) {
+        // Business
+        $router->group(['prefix' => 'business/{businessId}'], function() use ($router) {
+            $router->get('account', 'BusinessController@account');
+        });
 
+        $router->group(['prefix' => 'account/{accountId}'], function() use ($router) {
+            // Account
+            $router->get('view', 'AccountController@view');
+
+            // Campaign
+            $router->group(['prefix' => 'campaign'], function() use ($router) {
+                $router->get('', 'CampaignController@index');
+                $router->post('create', 'CampaignController@create');
+            });
+        });
     });
 });

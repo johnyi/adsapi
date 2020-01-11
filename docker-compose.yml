@@ -23,6 +23,7 @@ services:
         build:
             context: ./nginx
         volumes:
+            - ./api/src:/var/www/html
             - ${LOG}/nginx:/var/log/nginx
         networks:
           - default

@@ -8,10 +8,9 @@ use App\Models\Facebook\Messenger\Webhook;
 use App\Models\Message;
 use App\Models\MessageAttachment;
 use App\Models\MessageReferral;
-use App\Models\User;
+use App\Models\PageAudience;
 use DateTime;
 use Illuminate\Http\Request;
-use Log;
 
 class WebhookController extends MessengerController
 {
@@ -52,25 +51,26 @@ class WebhookController extends MessengerController
                                     continue;
                                 }
 
-                                // Save user
+                                // Save audience
                                 if ($event['sender']['id'] != $pageId) {
-                                    $user = User::where('page_id', '=', $pageId)->where('ps_id', '=', $event['sender']['id'])->first();
-                                    if (empty($user)) {
-                                        $user = new User();
-                                        $user['ps_id'] = $event['sender']['id'];
-                                        $user['page_id'] = $pageId;
+                                    $audience = PageAudience::where('page_id', '=', $pageId)->where('ps_id', '=', $event['sender']['id'])->first();
+                                    if (empty($audience)) {
+                                        $audience = new PageAudience();
+                                        $audience['ps_id'] = $event['sender']['id'];
+                                        $audience['page_id'] = $pageId;
                                     }
 
                                     $messengerUser = new MessengerUser($this->page['access_token']);
                                     $profile = $messengerUser->profile($event['sender']['id']);
 
-                                    $user['first_name'] = $profile['first_name'];
-                                    $user['last_name'] = $profile['last_name'];
-                                    $user['profile_pic'] = $profile['profile_pic'];
-                                    $user['locale'] = $profile['locale'];
-                                    $user['timezone'] = $profile['timezone'];
-                                    $user['gender'] = $profile['gender'];
-                                    $user->save();
+                                    $audience['name'] = $profile['name'];
+                                    $audience['first_name'] = $profile['first_name'];
+                                    $audience['last_name'] = $profile['last_name'];
+                                    $audience['profile_pic'] = $profile['profile_pic'];
+                                    $audience['locale'] = $profile['locale'];
+                                    $audience['timezone'] = $profile['timezone'];
+                                    $audience['gender'] = $profile['gender'];
+                                    $audience->save();
                                 }
 
                                 $message = new Message();
