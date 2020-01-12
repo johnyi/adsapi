@@ -13,6 +13,9 @@
 
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
     // Auth
+    $router->get('auth/js', 'AuthController@js');
+    $router->post('auth/user', 'AuthController@user');
+    $router->post('auth/token', 'AuthController@token');
     $router->get('auth/login', 'AuthController@login');
     $router->get('auth/callback', 'AuthController@callback');
 
