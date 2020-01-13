@@ -41,7 +41,7 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
     });
 
     // Messenger
-    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger'], function() use ($router) {
+    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger/{pageId}'], function() use ($router) {
         // Attachment
         $router->get('attachment', 'AttachmentController@index');
         $router->post('attachment/upload', 'AttachmentController@upload');
