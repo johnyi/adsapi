@@ -11,13 +11,26 @@
 |
 */
 
+$router->post('job', 'JobController@index');
+
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
     // Auth
-    $router->get('auth/js', 'AuthController@js');
-    $router->post('auth/user', 'AuthController@user');
-    $router->post('auth/token', 'AuthController@token');
-    $router->get('auth/login', 'AuthController@login');
-    $router->get('auth/callback', 'AuthController@callback');
+    $router->group(['prefix' => 'auth'], function() use ($router) {
+        $router->get('js', 'AuthController@js');
+        $router->get('login', 'AuthController@login');
+        $router->get('callback', 'AuthController@callback');
+        $router->post('user', 'AuthController@user');
+        $router->post('token', 'AuthController@token');
+    });
+
+    // User
+    $router->group(['namespace' => 'User', 'prefix' => 'user/{userId}'], function() use ($router) {
+        // Page
+        $router->group(['prefix' => 'page'], function() use ($router) {
+            $router->get('', 'PageController@index');
+            $router->post('create', 'PageController@create');
+        });
+    });
 
     // Messenger
     $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger/{pageId}'], function() use ($router) {
@@ -59,5 +72,9 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
                 $router->post('create', 'CampaignController@create');
             });
         });
+    });
+
+    // Page
+    $router->group(['prefix' => 'page/{pageId}'], function() use ($router) {
     });
 });

@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\Controller;
-use App\Models\Page;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class MessengerController extends Controller
+class UserController extends Controller
 {
-    protected $page;
+    protected $user;
 
     public function __construct(Request $request)
     {
-        $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->first();
-        if (empty($page)) {
+        $user = User::where('user_id', '=', $request->route()[2]['userId'])->first();
+        if (empty($user)) {
             return response()->json([
                 'code'    => -1,
-                'message' => 'Page not exists',
+                'message' => 'User not exists',
             ], 400);
         }
 
-        $this->page = $page;
+        $this->user = $user;
     }
 }

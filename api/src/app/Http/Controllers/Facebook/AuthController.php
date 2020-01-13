@@ -81,6 +81,8 @@ class AuthController extends Controller
         $permissions = [
             'email',
             'user_gender',
+            'manage_pages',
+            'pages_show_list',
             'pages_messaging',
 //            'ads_management',
 //            'ads_read',

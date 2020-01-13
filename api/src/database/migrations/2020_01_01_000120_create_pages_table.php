@@ -16,8 +16,11 @@ class CreatePagesTable extends Migration
         Schema::create('pages', function(Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('page_id', 20);
-            $table->string('access_token', 200);
-            $table->char('verify_token', 32);
+            $table->string('name', 50);
+            $table->string('category', 20);
+            $table->string('access_token', 500);
+            $table->char('verify_token', 40);
+            $table->string('user_id', 20);
         });
     }
 

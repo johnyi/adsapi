@@ -58,6 +58,6 @@ class Attachment extends Messenger
 
         $response = $this->client->post('me/message_attachments', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 }
