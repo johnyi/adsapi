@@ -19,7 +19,7 @@ class Label extends Messenger
 
         $response = $this->client->post('me/custom_labels', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function all()
@@ -33,7 +33,7 @@ class Label extends Messenger
 
         $response = $this->client->get('me/custom_labels', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function get($labelId)
@@ -47,7 +47,7 @@ class Label extends Messenger
 
         $response = $this->client->get($labelId, $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function delete($labelId)
@@ -60,7 +60,7 @@ class Label extends Messenger
 
         $response = $this->client->delete($labelId, $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function associateToUser($labelId, $psId)
@@ -76,7 +76,7 @@ class Label extends Messenger
 
         $response = $this->client->post($labelId . '/label', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function getUserLabel($psId)
@@ -90,7 +90,7 @@ class Label extends Messenger
 
         $response = $this->client->get($psId . '/custom_labels', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function deleteFromUser($labelId, $psId)
@@ -104,6 +104,6 @@ class Label extends Messenger
 
         $response = $this->client->delete($labelId . '/label', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 }

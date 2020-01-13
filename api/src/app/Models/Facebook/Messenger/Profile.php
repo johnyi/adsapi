@@ -27,7 +27,7 @@ class Profile extends Messenger
 
         $response = $this->client->get('me/messenger_profile', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function update($data)
@@ -41,7 +41,7 @@ class Profile extends Messenger
 
         $response = $this->client->post('me/messenger_profile', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function delete($fields)
@@ -57,6 +57,6 @@ class Profile extends Messenger
 
         $response = $this->client->delete('me/messenger_profile', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 }

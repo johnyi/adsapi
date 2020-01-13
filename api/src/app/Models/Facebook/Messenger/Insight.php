@@ -26,6 +26,6 @@ class Insight extends Messenger
 
         $response = $this->client->get('me/insights', $options);
 
-        return $response->json();
+        return json_decode($response->getBody()->getContents(), true);
     }
 }
