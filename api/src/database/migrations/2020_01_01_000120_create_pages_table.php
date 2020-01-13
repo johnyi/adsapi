@@ -19,7 +19,6 @@ class CreatePagesTable extends Migration
             $table->string('name', 50);
             $table->string('category', 20);
             $table->string('access_token', 500);
-            $table->char('verify_token', 40);
             $table->string('user_id', 20);
         });
     }

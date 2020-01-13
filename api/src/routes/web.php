@@ -11,8 +11,6 @@
 |
 */
 
-$router->post('job', 'JobController@index');
-
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
     // Auth
     $router->group(['prefix' => 'auth'], function() use ($router) {
@@ -21,38 +19,6 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         $router->get('callback', 'AuthController@callback');
         $router->post('user', 'AuthController@user');
         $router->post('token', 'AuthController@token');
-    });
-
-    // User
-    $router->group(['namespace' => 'User', 'prefix' => 'user/{userId}'], function() use ($router) {
-        // Page
-        $router->group(['prefix' => 'page'], function() use ($router) {
-            $router->get('', 'PageController@index');
-            $router->post('create', 'PageController@create');
-        });
-    });
-
-    // Messenger
-    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger/{pageId}'], function() use ($router) {
-        // Attachment
-        $router->get('attachment', 'AttachmentController@index');
-        $router->post('attachment/upload', 'AttachmentController@upload');
-
-        // Insight
-        $router->get('insight', 'InsightController@index');
-
-        // Message
-        $router->get('message', 'MessageController@index');
-        $router->post('message/send', 'MessageController@send');
-
-        // Profile
-        $router->get('profile', 'ProfileController@index');
-        $router->post('profile/update', 'ProfileController@update');
-        $router->post('profile/delete', 'ProfileController@delete');
-
-        // Webhook
-        $router->post('webhook', 'WebhookController@index');
-        $router->get('webhook', 'WebhookController@verify');
     });
 
     // Marketing
@@ -74,7 +40,41 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         });
     });
 
+    // Messenger
+    $router->group(['namespace' => 'Messenger', 'prefix' => 'messenger'], function() use ($router) {
+        // Attachment
+        $router->get('attachment', 'AttachmentController@index');
+        $router->post('attachment/upload', 'AttachmentController@upload');
+
+        // Insight
+        $router->get('insight', 'InsightController@index');
+
+        // Message
+        $router->get('message', 'MessageController@index');
+        $router->post('message/send', 'MessageController@send');
+
+        // Profile
+        $router->get('profile', 'ProfileController@index');
+        $router->post('profile/update', 'ProfileController@update');
+        $router->post('profile/delete', 'ProfileController@delete');
+    });
+
     // Page
     $router->group(['prefix' => 'page/{pageId}'], function() use ($router) {
     });
+
+    // User
+    $router->group(['namespace' => 'User', 'prefix' => 'user/{userId}'], function() use ($router) {
+        // Page
+        $router->group(['prefix' => 'page'], function() use ($router) {
+            $router->get('', 'PageController@index');
+            $router->post('create', 'PageController@create');
+        });
+    });
+
+    // Webhook
+    $router->post('webhook', 'WebhookController@index');
+    $router->get('webhook', 'WebhookController@verify');
 });
+
+$router->post('job', 'JobController@index');
