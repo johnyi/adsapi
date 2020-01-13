@@ -21,4 +21,8 @@ class PageController extends UserController
             'data' => $response->getDecodedBody()['data'],
         ]);
     }
+
+    public function subscribe()
+    {
+    }
 }

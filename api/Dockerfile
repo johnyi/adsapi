@@ -7,7 +7,7 @@ COPY src/ /var/www/html/
 
 RUN apk add --update --no-cache autoconf g++ make freetype libjpeg-turbo libpng freetype-dev libpng-dev libjpeg-turbo-dev libmcrypt-dev libxml2-dev libzip-dev postgresql-dev supervisor tzdata \
     && docker-php-ext-install bcmath gd pdo pdo_pgsql soap zip \
-    && pecl install grpc \
+    && pecl install grpc-1.26.0 \
     && pecl install mcrypt-1.0.1 \
     && pecl install protobuf \
     && pecl install redis \

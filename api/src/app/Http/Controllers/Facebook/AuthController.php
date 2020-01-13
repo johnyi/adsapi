@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Facebook\User\FacebookUserPageSync;
 use App\Models\User;
 use Facebook\Facebook as FB;
 use Illuminate\Http\Request;
@@ -12,59 +13,6 @@ class AuthController extends Controller
     public function js()
     {
         return view('fb.auth.index');
-    }
-
-    public function user(Request $request)
-    {
-        $this->validate($request, [
-            'id' => 'required',
-        ]);
-
-        $userId = $request->input('id');
-
-        $user = User::where('user_id', '=', $userId)->first();
-        if (empty($user)) {
-            $user = new User();
-            $user['user_id'] = $userId;
-        }
-
-        $user['email'] = $request->input('email') ?: null;
-        $user['name'] = $request->input('name') ?: null;
-        $user['first_name'] = $request->input('firstName') ?: null;
-        $user['last_name'] = $request->input('lastName') ?: null;
-        $user['picture'] = $request->input('picture') ?: null;
-        $user['gender'] = $request->input('gender') ?: null;
-        $user->save();
-
-        return response()->json([
-            'user_id' => $userId,
-        ]);
-    }
-
-    public function token(Request $request)
-    {
-        $this->validate($request, [
-            'id'          => 'required',
-            'accessToken' => 'required',
-        ]);
-
-        $userId = $request->input('id');
-        $accessToken = $request->input('accessToken');
-        $expiresAt = $request->input('expiresAt');
-
-        $user = User::where('user_id', '=', $userId)->first();
-        if (empty($user)) {
-            $user = new User();
-            $user['user_id'] = $userId;
-        }
-
-        $user['access_token'] = $accessToken;
-        $user['expires_at'] = $expiresAt;
-        $user->save();
-
-        return response()->json([
-            'user_id' => $userId,
-        ]);
     }
 
     public function login(Request $request)
@@ -148,6 +96,8 @@ class AuthController extends Controller
         $user['expires_at'] = $accessToken->getExpiresAt();
         $user->save();
 
+        $this->dispatch(new FacebookUserPageSync($user));
+
         if (array_key_exists('return', $_SESSION) and !empty($_SESSION['return'])) {
             $return = $_SESSION['return'];
             unset($_SESSION['return']);
@@ -158,6 +108,59 @@ class AuthController extends Controller
         return response()->json([
             'accessToken' => $accessToken->getValue(),
             'expiresAt'   => $accessToken->getExpiresAt(),
+        ]);
+    }
+
+    public function user(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+
+        $userId = $request->input('id');
+
+        $user = User::where('user_id', '=', $userId)->first();
+        if (empty($user)) {
+            $user = new User();
+            $user['user_id'] = $userId;
+        }
+
+        $user['email'] = $request->input('email') ?: null;
+        $user['name'] = $request->input('name') ?: null;
+        $user['first_name'] = $request->input('firstName') ?: null;
+        $user['last_name'] = $request->input('lastName') ?: null;
+        $user['picture'] = $request->input('picture') ?: null;
+        $user['gender'] = $request->input('gender') ?: null;
+        $user->save();
+
+        return response()->json([
+            'user_id' => $userId,
+        ]);
+    }
+
+    public function token(Request $request)
+    {
+        $this->validate($request, [
+            'id'          => 'required',
+            'accessToken' => 'required',
+        ]);
+
+        $userId = $request->input('id');
+        $accessToken = $request->input('accessToken');
+        $expiresAt = $request->input('expiresAt');
+
+        $user = User::where('user_id', '=', $userId)->first();
+        if (empty($user)) {
+            $user = new User();
+            $user['user_id'] = $userId;
+        }
+
+        $user['access_token'] = $accessToken;
+        $user['expires_at'] = $expiresAt;
+        $user->save();
+
+        return response()->json([
+            'user_id' => $userId,
         ]);
     }
 }

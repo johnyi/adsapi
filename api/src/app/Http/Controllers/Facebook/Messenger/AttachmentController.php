@@ -29,8 +29,6 @@ class AttachmentController extends MessengerController
             'type' => 'required',
         ]);
 
-        $response = [];
-
         $type = $request->input('type');
         $url = $request->input('url');
         $file = $request->file('file');
@@ -48,6 +46,11 @@ class AttachmentController extends MessengerController
             $filePath = $file->storeAs('images/' . $pageId, $file->getClientOriginalName());
 
             $response = $attachment->uploadFromFile(storage_path('app/' . $filePath));
+        } else {
+            return response()->json([
+                'code'    => -1,
+                'message' => 'attachment not exist',
+            ], 400);
         }
 
         $attachment = new Attachment();

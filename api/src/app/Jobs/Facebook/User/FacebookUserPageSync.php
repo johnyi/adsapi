@@ -47,7 +47,6 @@ class FacebookUserPageSync extends Job
                     $page = new Page();
                     $page['page_id'] = $userPage['id'];
                     $page['user_id'] = $this->user['user_id'];
-                    $page['verify_token'] = sha1($userPage['id'] . $userPage['name']);
                 }
 
                 $page['name'] = $userPage['name'];
