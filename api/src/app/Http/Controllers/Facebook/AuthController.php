@@ -30,10 +30,8 @@ class AuthController extends Controller
             'email',
             'user_gender',
             'manage_pages',
-            'pages_show_list',
             'pages_messaging',
-//            'ads_management',
-//            'ads_read',
+            'ads_management',
         ];
 
         $loginUrl = $helper->getLoginUrl(url('fb/auth/callback', [], true), $permissions);

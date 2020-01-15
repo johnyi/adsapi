@@ -61,6 +61,7 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
 
     // Page
     $router->group(['prefix' => 'page/{pageId}'], function() use ($router) {
+        $router->post('subscribe', 'PageController@subscribe');
     });
 
     // User

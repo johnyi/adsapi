@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Facebook\Facebook;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    protected $fb;
+
     protected $user;
 
     public function __construct(Request $request)
@@ -21,5 +24,10 @@ class UserController extends Controller
         }
 
         $this->user = $user;
+
+        $this->fb = new Facebook([
+            'app_id'     => env('FB_APP_ID'),
+            'app_secret' => env('FB_APP_SECRET'),
+        ]);
     }
 }

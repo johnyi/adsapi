@@ -80,7 +80,7 @@
                     } else {
                     }
                 }, {
-                    scope: 'email,user_gender,manage_pages,pages_show_list,pages_messaging'
+                    scope: 'email,user_gender,manage_pages,pages_messaging,ads_management'
                 });
             }
 
