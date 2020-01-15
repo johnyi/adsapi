@@ -2,12 +2,11 @@
 
 namespace App\Models\Facebook;
 
-use App\Models\Manager;
 use FacebookAds\Api;
 use FacebookAds\Cursor;
 use FacebookAds\Logger\CurlLogger;
 
-class Marketing
+class Business
 {
     public function __construct(string $accessToken)
     {

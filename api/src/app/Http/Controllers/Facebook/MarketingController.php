@@ -17,10 +17,7 @@ class MarketingController extends Controller
         if (!empty($managerId)) {
             $manager = Manager::where('manager_id', '=', $managerId)->first();
             if (empty($manager)) {
-                return response()->json([
-                    'code'    => -1,
-                    'message' => 'Manager not exists',
-                ], 400);
+                die('Manager not exists');
             }
 
             $this->accessToken = $manager['access_token'];
@@ -29,10 +26,7 @@ class MarketingController extends Controller
             if (!empty($userId)) {
                 $user = User::where('user_id', '=', $userId)->first();
                 if (empty($user)) {
-                    return response()->json([
-                        'code'    => -1,
-                        'message' => 'User not exists',
-                    ], 400);
+                    die('User not exists');
                 }
 
                 $this->accessToken = $user['access_token'];
@@ -40,10 +34,7 @@ class MarketingController extends Controller
         }
 
         if (empty($this->accessToken)) {
-            return response()->json([
-                'code'    => -1,
-                'message' => 'Access token not exists',
-            ], 400);
+            die('access token not exists');
         }
     }
 }

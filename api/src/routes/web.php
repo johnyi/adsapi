@@ -24,14 +24,16 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
     // Marketing
     $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing'], function() use ($router) {
         // Account
-        $router->group(['prefix' => 'account/{accountId}'], function() use ($router) {
-            $router->get('view', 'AccountController@view');
+        $router->group(['prefix' => 'account'], function() use ($router) {
+            $router->get('', 'AccountController@index');
+            $router->get('{accountId}/view', 'AccountController@view');
         });
 
         // Campaign
         $router->group(['prefix' => 'campaign'], function() use ($router) {
+            $router->get('', 'CampaignController@index');
             $router->post('create', 'CampaignController@create');
-            $router->get('{campaignId}/create', 'CampaignController@view');
+            $router->get('{campaignId}/view', 'CampaignController@view');
         });
     });
 
@@ -70,6 +72,11 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         $router->group(['prefix' => 'page'], function() use ($router) {
             $router->get('', 'PageController@index');
             $router->post('create', 'PageController@create');
+        });
+
+        // Page
+        $router->group(['prefix' => 'account'], function() use ($router) {
+            $router->get('', 'AccountController@index');
         });
     });
 

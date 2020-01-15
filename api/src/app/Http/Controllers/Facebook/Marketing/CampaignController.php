@@ -1,36 +1,40 @@
 <?php
 
-namespace App\Http\Controllers\Facebook;
+namespace App\Http\Controllers\Facebook\Marketing;
 
-use App\Http\Controllers\Controller;
-use FacebookAds\Object\AdAccount;
+use App\Http\Controllers\Facebook\MarketingController;
+use App\Models\Facebook\Marketing\Campaign as FacebookCampaign;
 use Illuminate\Http\Request;
 
-class CampaignController extends Controller
+class CampaignController extends MarketingController
 {
-    protected $account;
-
-    public function __construct(Request $request)
+    public function index(Request $request)
     {
-        $this->account = new AdAccount('act_' . $request->route()[2]['accountId']);
-    }
-
-    public function index()
-    {
-        $data = [];
-
-        $cursor = $this->account->getCampaigns();
-
-        while ($cursor->key() !== null) {
-            $campaign = $cursor->current()->getData();
-
-            $data[] = [
-                'name' => $campaign['name'],
-            ];
-
-            $cursor->next();
+        $accountId = $request->input('accountId');
+        if (empty($accountId)) {
+            return response()->json([
+                'code'    => -1,
+                'message' => 'Account id not exists',
+            ], 400);
         }
 
-        return response()->json();
+        $campaigns = (new FacebookCampaign($this->accessToken))->get($accountId);
+
+        return response()->json($campaigns);
+    }
+
+    public function create(Request $request)
+    {
+        $accountId = $request->input('accountId');
+        if (empty($accountId)) {
+            return response()->json([
+                'code'    => -1,
+                'message' => 'Account id not exists',
+            ], 400);
+        }
+
+        $campaign = (new FacebookCampaign($this->accessToken))->create($accountId);
+
+        return response()->json($campaign);
     }
 }
