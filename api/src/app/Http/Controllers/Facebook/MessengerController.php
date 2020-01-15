@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class MessengerController extends Controller
 {
-    protected $page;
+    protected $accessToken;
 
     public function __construct(Request $request)
     {
@@ -20,6 +20,6 @@ class MessengerController extends Controller
             ], 400);
         }
 
-        $this->page = $page;
+        $this->accessToken = $page['access_token'];
     }
 }

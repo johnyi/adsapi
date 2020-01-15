@@ -18,8 +18,7 @@ class InsightController extends MessengerController
         $start = date_create($request->input('start'))->getTimestamp();
         $end = date_create($request->input('end'))->getTimestamp();
 
-        $insight = new Insight($this->page['access_token']);
-        $response = $insight->get($start, $end);
+        $response = (new Insight($this->accessToken))->get($start, $end);
 
         return response()->json($response);
     }

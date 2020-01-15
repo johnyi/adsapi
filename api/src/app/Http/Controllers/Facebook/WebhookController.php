@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\Controller;
-use App\Models\Facebook\Messenger\User as MessengerUser;
-use App\Models\Facebook\Messenger\Webhook;
+use App\Models\Facebook\Messenger\UserProfile;
+use App\Models\Facebook\Webhook;
 use App\Models\Message;
 use App\Models\MessageAttachment;
 use App\Models\MessageReferral;
@@ -34,8 +34,6 @@ class WebhookController extends Controller
 
                                 if (array_key_exists('read', $event)) {
                                     Message::where('sender_id', '=', $event['recipient']['id'])->where('recipient_id', '=', $event['sender']['id'])->where('timestamp', '<=', $event['timestamp'])->update(['is_read' => true]);
-
-                                    continue;
                                 } elseif (array_key_exists('referral', $event)) {
                                     $messageReferral = new MessageReferral();
                                     $messageReferral['sender_id'] = $event['sender']['id'];
@@ -48,26 +46,40 @@ class WebhookController extends Controller
                                     $messageReferral['referer_url'] = array_key_exists('referer_url', $event['referral']) ? $event['referral']['referer_url'] : null;
                                     $messageReferral['created_at'] = $date->format('Y-m-d H:i:s');
                                     $messageReferral->save();
+                                } else {
+                                    // Save message
+                                    $message = new Message();
+                                    $message['type'] = array_key_exists('is_echo', $event['message']) ? 'RESPONSE' : 'RECEIVE';
+                                    $message['sender_id'] = $event['sender']['id'];
+                                    $message['recipient_id'] = $event['recipient']['id'];
+                                    $message['message_id'] = $event['message']['mid'];
+                                    $message['timestamp'] = $event['timestamp'];
+                                    $message['text'] = array_key_exists('text', $event['message']) ? $event['message']['text'] : null;
+                                    $message['quick_reply'] = array_key_exists('quick_reply', $event['message']) ? $event['message']['quick_reply']['payload'] : null;
+                                    $message['reply_to'] = array_key_exists('reply_to', $event['message']) ? $event['message']['reply_to']['mid'] : null;
+                                    $message['created_at'] = $date->format('Y-m-d H:i:s');
+                                    $message->save();
 
-                                    continue;
-                                }
+                                    // Save message attachment
+                                    if (array_key_exists('attachments', $event['message'])) {
+                                        foreach ($event['message']['attachments'] as $attachment) {
+                                            $messageAttachment = new MessageAttachment();
+                                            $messageAttachment['message_id'] = $event['message']['mid'];
+                                            $messageAttachment['type'] = $attachment['type'];
+                                            $messageAttachment['url'] = $attachment['payload']['url'];
+                                            $messageAttachment->save();
+                                        }
+                                    }
 
-                                $message = new Message();
-                                $message['type'] = array_key_exists('is_echo', $event['message']) ? 'RESPONSE' : 'RECEIVE';
-                                $message['sender_id'] = $event['sender']['id'];
-                                $message['recipient_id'] = $event['recipient']['id'];
-                                $message['message_id'] = $event['message']['mid'];
-                                $message['timestamp'] = $event['timestamp'];
-                                $message['text'] = array_key_exists('text', $event['message']) ? $event['message']['text'] : null;
-                                $message['quick_reply'] = array_key_exists('quick_reply', $event['message']) ? $event['message']['quick_reply']['payload'] : null;
-                                $message['reply_to'] = array_key_exists('reply_to', $event['message']) ? $event['message']['reply_to']['mid'] : null;
-                                $message['created_at'] = $date->format('Y-m-d H:i:s');
-                                $message->save();
+                                    // Save audience
+                                    if ($message['type'] == 'RECEIVE') {
+                                        $page = Page::where('page_id', '=', $event['recipient']['id'])->first();
+                                        if (empty($page)) {
+                                            continue;
+                                        }
 
-                                // Save audience
-                                if ($message['type'] == 'RECEIVE') {
-                                    $page = Page::where('page_id', '=', $event['recipient']['id'])->first();
-                                    if (!empty($page)) {
+                                        $profile = (new UserProfile($page['access_token']))->get($event['sender']['id']);
+
                                         $audience = PageAudience::where('page_id', '=', $event['recipient']['id'])->where('ps_id', '=', $event['sender']['id'])->first();
                                         if (empty($audience)) {
                                             $audience = new PageAudience();
@@ -75,27 +87,14 @@ class WebhookController extends Controller
                                             $audience['ps_id'] = $event['sender']['id'];
                                         }
 
-                                        $messengerUser = new MessengerUser($page['access_token']);
-                                        $profile = $messengerUser->profile($event['sender']['id']);
-
                                         $audience['name'] = $profile['name'];
                                         $audience['first_name'] = $profile['first_name'];
                                         $audience['last_name'] = $profile['last_name'];
                                         $audience['profile_pic'] = $profile['profile_pic'];
-                                        $audience['locale'] = $profile['locale'];
-                                        $audience['timezone'] = $profile['timezone'];
-                                        $audience['gender'] = $profile['gender'];
+                                        $audience['locale'] = array_key_exists('locale', $profile) ? $profile['locale'] : null;
+                                        $audience['timezone'] = array_key_exists('timezone', $profile) ? $profile['timezone'] : null;
+                                        $audience['gender'] = array_key_exists('gender', $profile) ? $profile['gender'] : null;
                                         $audience->save();
-                                    }
-                                }
-
-                                if (array_key_exists('attachments', $event['message'])) {
-                                    foreach ($event['message']['attachments'] as $attachment) {
-                                        $messageAttachment = new MessageAttachment();
-                                        $messageAttachment['message_id'] = $event['message']['mid'];
-                                        $messageAttachment['type'] = $attachment['type'];
-                                        $messageAttachment['url'] = $attachment['payload']['url'];
-                                        $messageAttachment->save();
                                     }
                                 }
                             }

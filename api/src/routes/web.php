@@ -22,15 +22,11 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
     });
 
     // Marketing
-    $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing/{managerId}'], function() use ($router) {
-        // Business
-        $router->group(['prefix' => 'business/{businessId}'], function() use ($router) {
-            $router->get('account', 'BusinessController@account');
-        });
-
-        $router->group(['prefix' => 'account/{accountId}'], function() use ($router) {
+    $router->group(['namespace' => 'Marketing', 'prefix' => 'marketing'], function() use ($router) {
+        $router->group(['prefix' => 'account'], function() use ($router) {
             // Account
-            $router->get('view', 'AccountController@view');
+            $router->get('', 'AccountController@index');
+            $router->get('{accountId}/view', 'AccountController@view');
 
             // Campaign
             $router->group(['prefix' => 'campaign'], function() use ($router) {
@@ -38,6 +34,11 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
                 $router->post('create', 'CampaignController@create');
             });
         });
+    });
+
+    // Business
+    $router->group(['namespace' => 'Business', 'prefix' => 'business/{managerId}'], function() use ($router) {
+        $router->get('account', 'AccountController@index');
     });
 
     // Messenger

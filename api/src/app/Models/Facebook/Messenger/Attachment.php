@@ -6,14 +6,7 @@ use App\Models\Facebook\Messenger;
 
 class Attachment extends Messenger
 {
-    protected $type;
-
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    public function uploadFromUrl($url)
+    public function uploadFromUrl($type, $url)
     {
         $options = [
             'query' => [
@@ -22,7 +15,7 @@ class Attachment extends Messenger
             'json'  => [
                 'message' => [
                     'attachment' => [
-                        'type'    => $this->type,
+                        'type'    => $type,
                         'payload' => [
                             'is_reusable' => true,
                             'url'         => $url,
@@ -37,7 +30,7 @@ class Attachment extends Messenger
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function uploadFromFile($filePath)
+    public function uploadFromFile($type, $filePath)
     {
         $options = [
             'query'     => [
@@ -48,7 +41,7 @@ class Attachment extends Messenger
                     'name'     => 'message',
                     'contents' => json_encode([
                         'attachment' => [
-                            'type'    => $this->type,
+                            'type'    => $type,
                             'payload' => [
                                 'is_reusable' => true,
                             ],

@@ -8,7 +8,11 @@ use Illuminate\Http\Request;
 
 class AccountController extends MarketingController
 {
-    public function view(Request $request, string $managerId, string $accountId)
+    public function index()
+    {
+    }
+
+    public function view(Request $request, string $accountId)
     {
         $account = (new Account($this->manager, $accountId))->get();
 

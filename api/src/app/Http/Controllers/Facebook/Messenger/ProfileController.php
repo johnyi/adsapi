@@ -10,8 +10,7 @@ class ProfileController extends MessengerController
 {
     public function index()
     {
-        $profile = new Profile($this->page['access_token']);
-        $response = $profile->get();
+        $response = (new Profile($this->accessToken))->get();
 
         return response()->json($response);
     }
@@ -22,8 +21,7 @@ class ProfileController extends MessengerController
             'profile' => 'required',
         ]);
 
-        $profile = new Profile($this->page['access_token']);
-        $response = $profile->update($request->input('profile'));
+        $response = (new Profile($this->accessToken))->update($request->input('profile'));
 
         return response()->json($response);
     }
@@ -34,8 +32,7 @@ class ProfileController extends MessengerController
             'fields' => 'required',
         ]);
 
-        $profile = new Profile($this->page['access_token']);
-        $response = $profile->delete($request->input('fields'));
+        $response = (new Profile($this->accessToken))->delete($request->input('fields'));
 
         return response()->json($response);
     }

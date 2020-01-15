@@ -18,10 +18,7 @@ class MessageController extends MessengerController
         $userId = $request->input('userId');
         $limit = $request->input('limit', 50);
 
-        $messages = Message::where('sender_id', '=', $userId)
-            ->orWhere('recipient_id', '=', $userId)
-            ->orderBy('timestamp', 'ASC')
-            ->paginate($limit);
+        $messages = Message::where('sender_id', '=', $userId)->orWhere('recipient_id', '=', $userId)->orderBy('timestamp', 'ASC')->paginate($limit);
 
         return response()->json([
             'total' => $messages->total(),
@@ -36,7 +33,7 @@ class MessageController extends MessengerController
             'message'   => 'required',
         ]);
 
-        $message = new FacebookMessage($this->page['access_token']);
+        $message = new FacebookMessage($this->accessToken);
         $message->setMessageType('RESPONSE');
         $message->setRecipient($request->input('recipient'));
         $message->setMessage($request->input('message'));

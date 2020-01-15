@@ -13,9 +13,7 @@ class AttachmentController extends MessengerController
     {
         $limit = $request->input('limit', 50);
 
-        $attachments = Attachment::where('page_id', '=', $pageId)
-            ->orderBy('created_at', 'DESC')
-            ->paginate($limit);
+        $attachments = Attachment::where('page_id', '=', $pageId)->orderBy('created_at', 'DESC')->paginate($limit);
 
         return response()->json([
             'total' => $attachments->total(),
@@ -33,11 +31,8 @@ class AttachmentController extends MessengerController
         $url = $request->input('url');
         $file = $request->file('file');
 
-        $attachment = new FacebookAttachment($this->page['access_token']);
-        $attachment->setType($type);
-
         if (!empty($url)) {
-            $response = $attachment->uploadFromUrl($url);
+            $response = (new FacebookAttachment($this->accessToken))->uploadFromUrl($type, $url);
         } elseif (!empty($file)) {
             if (!file_exists(storage_path('app/images/' . $pageId))) {
                 mkdir(storage_path('app/images/' . $pageId));
@@ -45,7 +40,7 @@ class AttachmentController extends MessengerController
 
             $filePath = $file->storeAs('images/' . $pageId, $file->getClientOriginalName());
 
-            $response = $attachment->uploadFromFile(storage_path('app/' . $filePath));
+            $response = (new FacebookAttachment($this->accessToken))->uploadFromFile($type, storage_path('app/' . $filePath));
         } else {
             return response()->json([
                 'code'    => -1,

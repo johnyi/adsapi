@@ -4,7 +4,7 @@ namespace App\Models\Facebook\Messenger;
 
 use App\Models\Facebook\Messenger;
 
-class User extends Messenger
+class UserProfile extends Messenger
 {
     protected static $fields = [
         'name',
@@ -16,7 +16,7 @@ class User extends Messenger
         'gender',
     ];
 
-    public function profile($psId)
+    public function get($psId)
     {
         $options = [
             'query' => [

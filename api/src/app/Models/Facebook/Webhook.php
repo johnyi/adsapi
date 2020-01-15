@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Facebook\Messenger;
+namespace App\Models\Facebook;
 
 class Webhook
 {
