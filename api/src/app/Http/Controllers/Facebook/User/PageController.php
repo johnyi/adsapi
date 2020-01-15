@@ -9,14 +9,14 @@ class PageController extends UserController
 {
     public function index()
     {
-        $response = $this->fb->get(sprintf('/%s/accounts', $this->user['user_id']), $this->user['access_token']);
+        $response = $this->fb->get(sprintf('/%s/accounts', $this->user['user_id']), $this->accessToken);
 
         return response()->json([
             'data' => $response->getDecodedBody()['data'],
         ]);
     }
 
-    public function create(Request $request)
+    public function create(Request $request, $userId)
     {
         $this->validate($request, [
             'name'    => 'required',
@@ -37,7 +37,7 @@ class PageController extends UserController
             $data['category_enum'] = $category;
         }
 
-        $response = $this->fb->post(sprintf('/%s/accounts', $this->user['user_id']), $data, $this->user['access_token']);
+        $response = $this->fb->post(sprintf('/%s/accounts', $userId), $data, $this->accessToken);
 
         dd($response);
     }

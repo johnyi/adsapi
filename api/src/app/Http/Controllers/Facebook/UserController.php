@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Facebook;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\FacebookController;
 use App\Models\User;
-use Facebook\Facebook;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends FacebookController
 {
-    protected $fb;
-
-    protected $user;
+    protected $accessToken;
 
     public function __construct(Request $request)
     {
+        parent::__construct();
+
         $user = User::where('user_id', '=', $request->route()[2]['userId'])->first();
         if (empty($user)) {
             return response()->json([
@@ -23,11 +22,6 @@ class UserController extends Controller
             ], 400);
         }
 
-        $this->user = $user;
-
-        $this->fb = new Facebook([
-            'app_id'     => env('FB_APP_ID'),
-            'app_secret' => env('FB_APP_SECRET'),
-        ]);
+        $this->accessToken = $user['access_token'];
     }
 }

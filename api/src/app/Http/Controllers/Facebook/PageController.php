@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Facebook;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\FacebookController;
 use App\Models\Page;
-use Facebook\Facebook;
 use Illuminate\Http\Request;
 
-class PageController extends Controller
+class PageController extends FacebookController
 {
-    protected $fb;
-
-    protected $page;
+    protected $accessToken;
 
     public function __construct(Request $request)
     {
+        parent::__construct();
+
         $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->first();
         if (empty($page)) {
             return response()->json([
@@ -23,15 +22,10 @@ class PageController extends Controller
             ], 400);
         }
 
-        $this->page = $page;
-
-        $this->fb = new Facebook([
-            'app_id'     => env('FB_APP_ID'),
-            'app_secret' => env('FB_APP_SECRET'),
-        ]);
+        $this->accessToken = $page['access_token'];
     }
 
-    public function subscribe()
+    public function subscribe(string $pageId)
     {
         $fields = [
             'messages',
@@ -41,7 +35,7 @@ class PageController extends Controller
             'message_echoes',
         ];
 
-        $response = $this->fb->post(sprintf('/%s/subscribed_apps?subscribed_fields=%s', $this->page['page_id'], implode(',', $fields)), [], $this->page['access_token']);
+        $response = $this->fb->post(sprintf('/%s/subscribed_apps?subscribed_fields=%s', $pageId, implode(',', $fields)), [], $this->accessToken);
 
         return response()->json($response->getDecodedBody());
     }
