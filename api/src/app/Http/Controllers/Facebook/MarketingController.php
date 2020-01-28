@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class MarketingController extends Controller
 {
+    protected $appId;
+
+    protected $appSecret;
+
     protected $accessToken;
 
     public function __construct(Request $request)
@@ -20,6 +24,8 @@ class MarketingController extends Controller
                 die('Manager not exists');
             }
 
+            $this->appId = $manager['client_id'];
+            $this->appSecret = $manager['client_secret'];
             $this->accessToken = $manager['access_token'];
         } else {
             $userId = $request->input('userId');
@@ -29,6 +35,8 @@ class MarketingController extends Controller
                     die('User not exists');
                 }
 
+                $this->appId = env('FB_APP_ID');
+                $this->appSecret = env('FB_APP_SECRET');
                 $this->accessToken = $user['access_token'];
             }
         }

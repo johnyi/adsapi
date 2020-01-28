@@ -9,10 +9,9 @@ use FacebookAds\Logger\CurlLogger;
 
 class Marketing
 {
-    public function __construct(string $accessToken)
+    public function __construct(string $appId, string $appSecret, string $accessToken)
     {
-        $api = Api::init(env('FB_APP_ID'), env('FB_APP_SECRET'), $accessToken);
-        $api->setLogger(new CurlLogger());
+        Api::init($appId, $appSecret, $accessToken)->setLogger(new CurlLogger());
 
         Cursor::setDefaultUseImplicitFetch(true);
     }

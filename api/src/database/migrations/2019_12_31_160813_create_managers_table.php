@@ -22,7 +22,7 @@ class CreateManagersTable extends Migration
             $table->string('client_id', 200);
             $table->string('client_secret', 200);
             $table->string('developer_token', 200)->nullable();
-            $table->string('access_token', 200)->nullable();
+            $table->string('access_token', 1000)->nullable();
             $table->string('refresh_token', 500)->nullable();
         });
     }

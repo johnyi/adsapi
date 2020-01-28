@@ -4,51 +4,46 @@ namespace App\Models\Facebook\Marketing;
 
 use App\Models\Facebook\Marketing;
 use FacebookAds\Object\AdAccount;
-use FacebookAds\Object\Campaign as FacebookCampaign;
 
-class Campaign extends Marketing
+class Ad extends Marketing
 {
-    public function get(string $accountId, array $params)
+    public function get(string $accountId)
     {
         $response = [];
 
-        $cursor = (new AdAccount('act_' . $accountId))->getCampaigns([
+        $cursor = (new AdAccount('act_' . $accountId))->getAdSets([
             'id',
             'name',
-            'status',
+            'daily_budget',
+            'bid_amount',
             'budget_remaining',
-        ], $params);
+            'bid_strategy',
+            'optimization_goal',
+            'billing_event',
+            'status',
+            'target',
+            'account_id',
+            'campaign_id',
+        ]);
 
-        if (!empty($params['limit'])) {
-            $content = $cursor->getLastResponse()->getContent();
+        while ($cursor->key() !== null) {
+            $row = $cursor->current()->getData();
 
-            $response['before'] = $cursor->getBefore();
-            $response['after'] = $cursor->getAfter();
-            $response['data'] = [];
+            $response[] = [
+                'adSetId'          => $row['id'],
+                'name'             => $row['name'],
+                'dailyBudget'      => $row['daily_budget'],
+                'bidAmount'        => $row['bid_amount'],
+                'budgetRemaining'  => $row['budget_remaining'],
+                'bidStrategy'      => $row['bid_strategy'],
+                'optimizationGoal' => $row['optimization_goal'],
+                'billingEvent'     => $row['billing_event'],
+                'status'           => $row['status'],
+                'accountId'        => $row['account_id'],
+                'campaignId'       => $row['campaign_id'],
+            ];
 
-            foreach ($content['data'] as $row) {
-                $response['data'][] = [
-                    'campaignId'      => $row['id'],
-                    'name'            => $row['name'],
-                    'status'          => $row['status'],
-                    'budgetRemaining' => $row['budget_remaining'],
-                ];
-            }
-        } else {
-            $response['data'] = [];
-
-            while ($cursor->key() !== null) {
-                $row = $cursor->current()->getData();
-
-                $response['data'][] = [
-                    'campaignId'      => $row['id'],
-                    'name'            => $row['name'],
-                    'status'          => $row['status'],
-                    'budgetRemaining' => $row['budget_remaining'],
-                ];
-
-                $cursor->next();
-            }
+            $cursor->next();
         }
 
         return $response;
@@ -56,30 +51,9 @@ class Campaign extends Marketing
 
     public function create(string $accountId, array $params)
     {
-        $response = (new AdAccount('act_' . $accountId))->createCampaign([], $params);
+        $response = (new AdAccount('act_' . $accountId))->createAd([], $params);
 
         return $response->exportAllData();
-    }
-
-    public function find(string $campaignId)
-    {
-        $response = (new FacebookCampaign($campaignId))->getSelf();
-
-        return $response->exportAllData();
-    }
-
-    public function update(string $campaignId, array $params)
-    {
-        $response = (new FacebookCampaign($campaignId))->updateSelf([], $params);
-
-        return $response->exportAllData();
-    }
-
-    public function delete(string $campaignId)
-    {
-        $response = (new FacebookCampaign($campaignId))->deleteSelf();
-
-        return $response->getContent();
     }
 
     public function insight(string $accountId, array $params)
@@ -92,6 +66,10 @@ class Campaign extends Marketing
             'account_name',
             'campaign_id',
             'campaign_name',
+            'adset_id',
+            'adset_name',
+            'ad_id',
+            'ad_name',
             'actions',
             'clicks',
             'conversions',
@@ -129,6 +107,10 @@ class Campaign extends Marketing
                     'currency'          => array_key_exists('account_currency', $row) ? $row['account_currency'] : null,
                     'campaignId'        => array_key_exists('campaign_id', $row) ? $row['campaign_id'] : null,
                     'campaignName'      => array_key_exists('campaign_name', $row) ? $row['campaign_name'] : null,
+                    'adSetId'           => array_key_exists('adset_id', $row) ? $row['adset_id'] : null,
+                    'adSetName'         => array_key_exists('adset_name', $row) ? $row['adset_name'] : null,
+                    'adId'              => array_key_exists('ad_id', $row) ? $row['ad_id'] : null,
+                    'adName'            => array_key_exists('ad_name', $row) ? $row['ad_name'] : null,
                     'actions'           => array_key_exists('actions', $row) ? $row['actions'] : null,
                     'clicks'            => array_key_exists('clicks', $row) ? $row['clicks'] : null,
                     'conversions'       => array_key_exists('conversions', $row) ? $row['conversions'] : null,
@@ -157,6 +139,10 @@ class Campaign extends Marketing
                     'currency'          => array_key_exists('account_currency', $row) ? $row['account_currency'] : null,
                     'campaignId'        => array_key_exists('campaign_id', $row) ? $row['campaign_id'] : null,
                     'campaignName'      => array_key_exists('campaign_name', $row) ? $row['campaign_name'] : null,
+                    'adSetId'           => array_key_exists('adset_id', $row) ? $row['adset_id'] : null,
+                    'adSetName'         => array_key_exists('adset_name', $row) ? $row['adset_name'] : null,
+                    'adId'              => array_key_exists('ad_id', $row) ? $row['ad_id'] : null,
+                    'adName'            => array_key_exists('ad_name', $row) ? $row['ad_name'] : null,
                     'actions'           => array_key_exists('actions', $row) ? $row['actions'] : null,
                     'clicks'            => array_key_exists('clicks', $row) ? $row['clicks'] : null,
                     'conversions'       => array_key_exists('conversions', $row) ? $row['conversions'] : null,

@@ -27,13 +27,37 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
         $router->group(['prefix' => 'account'], function() use ($router) {
             $router->get('', 'AccountController@index');
             $router->get('{accountId}/view', 'AccountController@view');
+            $router->get('{accountId}/insight', 'AccountController@insight');
         });
 
         // Campaign
         $router->group(['prefix' => 'campaign'], function() use ($router) {
             $router->get('', 'CampaignController@index');
             $router->post('create', 'CampaignController@create');
+            $router->get('insight', 'CampaignController@insight');
             $router->get('{campaignId}/view', 'CampaignController@view');
+            $router->put('{campaignId}/update', 'CampaignController@update');
+            $router->delete('{campaignId}/delete', 'CampaignController@delete');
+        });
+
+        // Ad Set
+        $router->group(['prefix' => 'adset'], function() use ($router) {
+            $router->get('', 'AdSetController@index');
+            $router->post('create', 'AdSetController@create');
+            $router->get('insight', 'AdSetController@insight');
+            $router->get('{adSetId}/view', 'AdSetController@view');
+            $router->put('{adSetId}/update', 'AdSetController@update');
+            $router->delete('{adSetId}/delete', 'AdSetController@delete');
+        });
+
+        // Ad
+        $router->group(['prefix' => 'ad'], function() use ($router) {
+            $router->get('', 'AdController@index');
+            $router->post('create', 'AdController@create');
+            $router->get('insight', 'AdController@insight');
+            $router->get('{adId}/view', 'AdController@view');
+            $router->put('{adId}/update', 'AdController@update');
+            $router->delete('{adId}/delete', 'AdController@delete');
         });
     });
 

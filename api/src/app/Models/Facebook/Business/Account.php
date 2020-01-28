@@ -2,8 +2,6 @@
 
 namespace App\Models\Facebook\Business;
 
-use App\Models\Manager;
-use FacebookAds\Object\AdAccount;
 use FacebookAds\Object\Business;
 
 class Account extends Business
