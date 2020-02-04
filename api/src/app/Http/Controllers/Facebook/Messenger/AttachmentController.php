@@ -11,13 +11,24 @@ class AttachmentController extends MessengerController
 {
     public function index(Request $request, string $pageId)
     {
-        $limit = $request->input('limit', 50);
+        $items = [];
 
-        $attachments = Attachment::where('page_id', '=', $pageId)->orderBy('created_at', 'DESC')->paginate($limit);
+        $attachments = Attachment::where('page_id', '=', $pageId)->orderBy('created_at', 'DESC')->paginate($request->input('limit', 50));
+
+        foreach ($attachments->items() as $item) {
+            $items[] = [
+                'id'           => $item['id'],
+                'type'         => $item['type'],
+                'name'         => $item['name'],
+                'pageId'       => $item['page_id'],
+                'attachmentId' => $item['attachment_id'],
+                'createdAt'    => $item['created_at'],
+            ];
+        }
 
         return response()->json([
             'total' => $attachments->total(),
-            'items' => $attachments->items(),
+            'items' => $items,
         ]);
     }
 

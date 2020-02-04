@@ -5,68 +5,99 @@ namespace App\Models\Facebook\Marketing;
 use App\Models\Facebook\Marketing;
 use FacebookAds\Object\AdAccount;
 use FacebookAds\Object\AdSet as FacebookAdSet;
+use FacebookAds\Object\Campaign;
 
 class AdSet extends Marketing
 {
-    public function get(string $accountId)
+    public function get(array $data, array $params)
     {
         $response = [];
 
-        $cursor = (new AdAccount('act_' . $accountId))->getAdSets([
-            'id',
-            'name',
-            'daily_budget',
-            'bid_amount',
-            'budget_remaining',
-            'bid_strategy',
-            'optimization_goal',
-            'billing_event',
-            'status',
-            'target',
-            'account_id',
-            'campaign_id',
-        ]);
+        if (array_key_exists('campaignId', $data)) {
+            $cursor = (new Campaign($data['campaignId']))->getAdSets([
+                'id',
+                'account_id',
+                'campaign_id',
+                'bid_amount',
+                'bid_strategy',
+                'billing_event',
+                'budget_remaining',
+                'daily_budget',
+                'daily_spend_cap',
+                'effective_status',
+                'issues_info',
+                'name',
+                'optimization_goal',
+                'status',
+                'targeting',
+            ], $params);
+        } else {
+            $cursor = (new AdAccount('act_' . $data['accountId']))->getAdSets([
+                'id',
+                'account_id',
+                'campaign_id',
+                'bid_amount',
+                'bid_strategy',
+                'billing_event',
+                'budget_remaining',
+                'daily_budget',
+                'daily_spend_cap',
+                'effective_status',
+                'issues_info',
+                'name',
+                'optimization_goal',
+                'status',
+                'targeting',
+            ], $params);
+        }
+
+        $response['data'] = [];
 
         if (!empty($params['limit'])) {
-            $content = $cursor->getLastResponse()->getContent();
-
             $response['before'] = $cursor->getBefore();
             $response['after'] = $cursor->getAfter();
-            $response['data'] = [];
+
+            $content = $cursor->getLastResponse()->getContent();
 
             foreach ($content['data'] as $row) {
                 $response['data'][] = [
-                    'adSetId'          => $row['id'],
-                    'name'             => $row['name'],
-                    'dailyBudget'      => $row['daily_budget'],
-                    'bidAmount'        => $row['bid_amount'],
-                    'budgetRemaining'  => $row['budget_remaining'],
-                    'bidStrategy'      => $row['bid_strategy'],
-                    'optimizationGoal' => $row['optimization_goal'],
-                    'billingEvent'     => $row['billing_event'],
-                    'status'           => $row['status'],
                     'accountId'        => $row['account_id'],
                     'campaignId'       => $row['campaign_id'],
+                    'adSetId'          => $row['id'],
+                    'name'             => $row['name'],
+                    'bidAmount'        => $row['bid_amount'],
+                    'bidStrategy'      => $row['bid_strategy'],
+                    'billingEvent'     => $row['billing_event'],
+                    'budgetRemaining'  => $row['budget_remaining'],
+                    'dailyBudget'      => $row['daily_budget'],
+                    'dailySpendCap'    => $row['daily_spend_cap'],
+                    'effectiveStatus'  => $row['effective_status'],
+                    'issuesInfo'       => $row['issues_info'],
+                    'optimizationGoal' => $row['optimization_goal'],
+                    'status'           => $row['status'],
+                    'targeting'        => $row['targeting'],
                 ];
             }
         } else {
-            $response['data'] = [];
-
             while ($cursor->key() !== null) {
                 $row = $cursor->current()->getData();
 
-                $response[] = [
-                    'adSetId'          => $row['id'],
-                    'name'             => $row['name'],
-                    'dailyBudget'      => $row['daily_budget'],
-                    'bidAmount'        => $row['bid_amount'],
-                    'budgetRemaining'  => $row['budget_remaining'],
-                    'bidStrategy'      => $row['bid_strategy'],
-                    'optimizationGoal' => $row['optimization_goal'],
-                    'billingEvent'     => $row['billing_event'],
-                    'status'           => $row['status'],
+                $response['data'][] = [
                     'accountId'        => $row['account_id'],
                     'campaignId'       => $row['campaign_id'],
+                    'adSetId'          => $row['id'],
+                    'name'             => $row['name'],
+                    'bidAmount'        => $row['bid_amount'],
+                    'bidStrategy'      => $row['bid_strategy'],
+                    'billingEvent'     => $row['billing_event'],
+                    'budgetRemaining'  => $row['budget_remaining'],
+                    'dailyBudget'      => $row['daily_budget'],
+                    'dailySpendCap'    => $row['daily_spend_cap'],
+                    'effectiveStatus'  => $row['effective_status'],
+                    'issuesInfo'       => $row['issues_info'],
+                    'optimizationGoal' => $row['optimization_goal'],
+                    'status'           => $row['status'],
+                    'targeting'        => $row['targeting'],
                 ];
 
                 $cursor->next();
@@ -85,7 +116,23 @@ class AdSet extends Marketing
 
     public function find(string $adSetId)
     {
-        $response = (new FacebookAdSet($adSetId))->getSelf();
+        $response = (new FacebookAdSet($adSetId))->getSelf([
+            'id',
+            'account_id',
+            'campaign_id',
+            'bid_amount',
+            'bid_strategy',
+            'billing_event',
+            'budget_remaining',
+            'daily_budget',
+            'daily_spend_cap',
+            'effective_status',
+            'issues_info',
+            'name',
+            'optimization_goal',
+            'status',
+            'targeting',
+        ]);
 
         return $response->exportAllData();
     }
@@ -139,7 +186,10 @@ class AdSet extends Marketing
 
         $content = $cursor->getLastResponse()->getContent();
 
-        $response['summary'] = $content['summary'];
+        if (array_key_exists('summary', $content)) {
+            $response['summary'] = $content['summary'];
+        }
+
         $response['data'] = [];
 
         if (!empty($params['limit'])) {

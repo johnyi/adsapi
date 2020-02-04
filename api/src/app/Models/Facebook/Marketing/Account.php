@@ -38,7 +38,10 @@ class Account extends Marketing
 
         $content = $cursor->getLastResponse()->getContent();
 
-        $response['summary'] = $content['summary'];
+        if (array_key_exists('summary', $content)) {
+            $response['summary'] = $content['summary'];
+        }
+
         $response['data'] = [];
 
         if (!empty($params['limit'])) {

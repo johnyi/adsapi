@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Facebook\Marketing;
 
 use App\Http\Controllers\Facebook\MarketingController;
-use App\Models\Facebook\Marketing\Campaign as FacebookCampaign;
+use App\Models\Facebook\Marketing\Campaign;
 use Illuminate\Http\Request;
 
 class CampaignController extends MarketingController
@@ -15,12 +15,13 @@ class CampaignController extends MarketingController
         ]);
 
         $params = [
-            'before' => $request->input('before', null),
-            'after'  => $request->input('after', null),
-            'limit'  => $request->input('limit', 50),
+            'effective_status' => $request->input('effectiveStatus', []),
+            'before'           => $request->input('before', null),
+            'after'            => $request->input('after', null),
+            'limit'            => $request->input('limit', null),
         ];
 
-        $campaigns = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->get($request->input('accountId'), $params);
+        $campaigns = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->get($request->input('accountId'), $params);
 
         return response()->json($campaigns);
     }
@@ -34,44 +35,47 @@ class CampaignController extends MarketingController
             'accountId' => 'required',
         ]);
 
-        $data = [
+        $params = [
             'special_ad_category' => 'NONE',
             'name'                => $request->input('name'),
             'objective'           => $request->input('objective'),
             'status'              => $request->input('status'),
         ];
 
-        $campaign = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->create($request->input('accountId'), $data);
+        $campaign = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->create($request->input('accountId'), $params);
 
         return response()->json($campaign);
     }
 
     public function view(string $campaignId)
     {
-        $campaign = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->find($campaignId);
+        $campaign = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->find($campaignId);
 
         return response()->json($campaign);
     }
 
     public function update(Request $request, string $campaignId)
     {
-        $data = [];
+        $params = [];
 
         $name = $request->input('name');
         if (!empty($name)) {
-            $data['name'] = $name;
+            $params['name'] = $name;
         }
 
-        $campaign = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->update($campaignId, $data);
+        $status = $request->input('status');
+        if (!empty($status)) {
+            $params['status'] = $status;
+        }
+
+        $campaign = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->update($campaignId, $params);
 
         return response()->json($campaign);
     }
 
     public function delete(string $campaignId)
     {
-        $data = [];
-
-        $campaign = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->delete($campaignId, $data);
+        $campaign = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->delete($campaignId);
 
         return response()->json($campaign);
     }
@@ -98,7 +102,7 @@ class CampaignController extends MarketingController
             'limit'           => $request->input('limit', null),
         ];
 
-        $insights = (new FacebookCampaign($this->appId, $this->appSecret, $this->accessToken))->insight($request->input('accountId'), $params);
+        $insights = (new Campaign($this->appId, $this->appSecret, $this->accessToken))->insight($request->input('accountId'), $params);
 
         return response()->json($insights);
     }

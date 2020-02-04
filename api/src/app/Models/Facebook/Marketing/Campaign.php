@@ -14,37 +14,60 @@ class Campaign extends Marketing
 
         $cursor = (new AdAccount('act_' . $accountId))->getCampaigns([
             'id',
-            'name',
-            'status',
+            'account_id',
+            'bid_strategy',
             'budget_remaining',
+            'daily_budget',
+            'effective_status',
+            'issues_info',
+            'name',
+            'objective',
+            'recommendations',
+            'spend_cap',
+            'status',
         ], $params);
 
-        if (!empty($params['limit'])) {
-            $content = $cursor->getLastResponse()->getContent();
+        $response['data'] = [];
 
+        if (!empty($params['limit'])) {
             $response['before'] = $cursor->getBefore();
             $response['after'] = $cursor->getAfter();
-            $response['data'] = [];
+
+            $content = $cursor->getLastResponse()->getContent();
 
             foreach ($content['data'] as $row) {
                 $response['data'][] = [
+                    'accountId'       => $row['account_id'],
                     'campaignId'      => $row['id'],
-                    'name'            => $row['name'],
-                    'status'          => $row['status'],
+                    'bidStrategy'     => array_key_exists('bid_strategy', $row) ? $row['bid_strategy'] : null,
                     'budgetRemaining' => $row['budget_remaining'],
+                    'dailyBudget'     => array_key_exists('daily_budget', $row) ? $row['daily_budget'] : null,
+                    'effectiveStatus' => $row['effective_status'],
+                    'issuesInfo'      => array_key_exists('issues_info', $row) ? $row['issues_info'] : null,
+                    'name'            => $row['name'],
+                    'objective'       => $row['objective'],
+                    'recommendations' => array_key_exists('recommendations', $row) ? $row['recommendations'] : null,
+                    'spendCap'        => array_key_exists('spend_cap', $row) ? $row['spend_cap'] : null,
+                    'status'          => $row['status'],
                 ];
             }
         } else {
-            $response['data'] = [];
-
             while ($cursor->key() !== null) {
                 $row = $cursor->current()->getData();
 
                 $response['data'][] = [
+                    'accountId'       => $row['account_id'],
                     'campaignId'      => $row['id'],
-                    'name'            => $row['name'],
-                    'status'          => $row['status'],
+                    'bidStrategy'     => array_key_exists('bid_strategy', $row) ? $row['bid_strategy'] : null,
                     'budgetRemaining' => $row['budget_remaining'],
+                    'dailyBudget'     => array_key_exists('daily_budget', $row) ? $row['daily_budget'] : null,
+                    'effectiveStatus' => $row['effective_status'],
+                    'issuesInfo'      => array_key_exists('issues_info', $row) ? $row['issues_info'] : null,
+                    'name'            => $row['name'],
+                    'objective'       => $row['objective'],
+                    'recommendations' => array_key_exists('recommendations', $row) ? $row['recommendations'] : null,
+                    'spendCap'        => array_key_exists('spend_cap', $row) ? $row['spend_cap'] : null,
+                    'status'          => $row['status'],
                 ];
 
                 $cursor->next();
@@ -63,7 +86,20 @@ class Campaign extends Marketing
 
     public function find(string $campaignId)
     {
-        $response = (new FacebookCampaign($campaignId))->getSelf();
+        $response = (new FacebookCampaign($campaignId))->getSelf([
+            'id',
+            'account_id',
+            'bid_strategy',
+            'budget_remaining',
+            'daily_budget',
+            'effective_status',
+            'issues_info',
+            'name',
+            'objective',
+            'recommendations',
+            'spend_cap',
+            'status',
+        ]);
 
         return $response->exportAllData();
     }
@@ -115,7 +151,10 @@ class Campaign extends Marketing
 
         $content = $cursor->getLastResponse()->getContent();
 
-        $response['summary'] = $content['summary'];
+        if (array_key_exists('summary', $content)) {
+            $response['summary'] = $content['summary'];
+        }
+
         $response['data'] = [];
 
         if (!empty($params['limit'])) {

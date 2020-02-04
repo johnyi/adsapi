@@ -3,47 +3,87 @@
 namespace App\Models\Facebook\Marketing;
 
 use App\Models\Facebook\Marketing;
+use FacebookAds\Object\Ad as FacebookAd;
 use FacebookAds\Object\AdAccount;
+use FacebookAds\Object\AdSet;
+use FacebookAds\Object\Campaign;
 
 class Ad extends Marketing
 {
-    public function get(string $accountId)
+    public function get(array $data, array $params)
     {
         $response = [];
 
-        $cursor = (new AdAccount('act_' . $accountId))->getAdSets([
-            'id',
-            'name',
-            'daily_budget',
-            'bid_amount',
-            'budget_remaining',
-            'bid_strategy',
-            'optimization_goal',
-            'billing_event',
-            'status',
-            'target',
-            'account_id',
-            'campaign_id',
-        ]);
+        if (array_key_exists('adSetId', $data)) {
+            $cursor = (new AdSet($data['adSetId']))->getAds([
+                'id',
+                'account_id',
+                'campaign_id',
+                'adset_id',
+                'name',
+                'bid_amount',
+                'effective_status',
+                'status',
+            ], $params);
+        } elseif (array_key_exists('campaignId', $data)) {
+            $cursor = (new Campaign($data['campaignId']))->getAds([
+                'id',
+                'account_id',
+                'campaign_id',
+                'adset_id',
+                'name',
+                'bid_amount',
+                'effective_status',
+                'status',
+            ]);
+        } else {
+            $cursor = (new AdAccount('act_' . $data['accountId']))->getAds([
+                'id',
+                'account_id',
+                'campaign_id',
+                'adset_id',
+                'name',
+                'bid_amount',
+                'effective_status',
+                'status',
+            ], $params);
+        }
 
-        while ($cursor->key() !== null) {
-            $row = $cursor->current()->getData();
+        if (!empty($params['limit'])) {
+            $response['before'] = $cursor->getBefore();
+            $response['after'] = $cursor->getAfter();
 
-            $response[] = [
-                'adSetId'          => $row['id'],
-                'name'             => $row['name'],
-                'dailyBudget'      => $row['daily_budget'],
-                'bidAmount'        => $row['bid_amount'],
-                'budgetRemaining'  => $row['budget_remaining'],
-                'bidStrategy'      => $row['bid_strategy'],
-                'optimizationGoal' => $row['optimization_goal'],
-                'billingEvent'     => $row['billing_event'],
-                'status'           => $row['status'],
-                'accountId'        => $row['account_id'],
-                'campaignId'       => $row['campaign_id'],
-            ];
+            $content = $cursor->getLastResponse()->getContent();
 
-            $cursor->next();
+            foreach ($content['data'] as $row) {
+                $response[] = [
+                    'accountId'       => $row['account_id'],
+                    'campaignId'      => $row['campaign_id'],
+                    'adSetId'         => $row['adset_id'],
+                    'adId'            => $row['id'],
+                    'name'            => $row['name'],
+                    'bidAmount'       => $row['bid_amount'],
+                    'effectiveStatus' => $row['effective_status'],
+                    'status'          => $row['status'],
+                ];
+            }
+        } else {
+            while ($cursor->key() !== null) {
+                $row = $cursor->current()->getData();
+
+                $response[] = [
+                    'accountId'       => $row['account_id'],
+                    'campaignId'      => $row['campaign_id'],
+                    'adSetId'         => $row['adset_id'],
+                    'adId'            => $row['id'],
+                    'name'            => $row['name'],
+                    'bidAmount'       => $row['bid_amount'],
+                    'effectiveStatus' => $row['effective_status'],
+                    'status'          => $row['status'],
+                ];
+
+                $cursor->next();
+            }
         }
 
         return $response;
@@ -54,6 +94,29 @@ class Ad extends Marketing
         $response = (new AdAccount('act_' . $accountId))->createAd([], $params);
 
         return $response->exportAllData();
+    }
+
+    public function find(string $adId)
+    {
+        $response = (new FacebookAd($adId))->getSelf([
+
+        ]);
+
+        return $response->exportAllData();
+    }
+
+    public function update(string $adId, array $params)
+    {
+        $response = (new FacebookAd($adId))->updateSelf([], $params);
+
+        return $response->exportAllData();
+    }
+
+    public function delete(string $adId)
+    {
+        $response = (new FacebookAd($adId))->deleteSelf();
+
+        return $response->getContent();
     }
 
     public function insight(string $accountId, array $params)

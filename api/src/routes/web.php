@@ -14,11 +14,13 @@
 $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($router) {
     // Auth
     $router->group(['prefix' => 'auth'], function() use ($router) {
+        // Frontend
         $router->get('js', 'AuthController@js');
-        $router->get('login', 'AuthController@login');
-        $router->get('callback', 'AuthController@callback');
         $router->post('user', 'AuthController@user');
         $router->post('token', 'AuthController@token');
+        // Backend
+        $router->get('login', 'AuthController@login');
+        $router->get('callback', 'AuthController@callback');
     });
 
     // Marketing
@@ -59,6 +61,28 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
             $router->put('{adId}/update', 'AdController@update');
             $router->delete('{adId}/delete', 'AdController@delete');
         });
+
+        // Ad Creative
+        $router->group(['prefix' => 'adcreative'], function() use ($router) {
+            $router->get('{adCreativeId}/view', 'AdCreativeController@view');
+        });
+
+        // Ad Image
+        $router->group(['prefix' => 'adimage'], function() use ($router) {
+            $router->get('', 'AdImageController@index');
+            $router->post('create', 'AdImageController@create');
+            $router->delete('delete', 'AdImageController@delete');
+        });
+
+        // Ad Video
+        $router->group(['prefix' => 'advideo'], function() use ($router) {
+            $router->get('', 'AdVideoController@index');
+            $router->post('create', 'AdVideoController@create');
+            $router->delete('{adVideoId}/delete', 'AdVideoController@delete');
+        });
+
+        // Target
+        $router->get('targeting/search', 'TargetingController@search');
     });
 
     // Business
@@ -81,8 +105,8 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
 
         // Profile
         $router->get('profile', 'ProfileController@index');
-        $router->post('profile/update', 'ProfileController@update');
-        $router->post('profile/delete', 'ProfileController@delete');
+        $router->put('profile/update', 'ProfileController@update');
+        $router->delete('profile/delete', 'ProfileController@delete');
     });
 
     // Page

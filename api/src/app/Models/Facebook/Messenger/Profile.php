@@ -18,6 +18,8 @@ class Profile extends Messenger
 
     public function get()
     {
+        $response = [];
+
         $options = [
             'query' => [
                 'access_token' => $this->accessToken,
@@ -25,13 +27,24 @@ class Profile extends Messenger
             ],
         ];
 
-        $response = $this->client->get('me/messenger_profile', $options);
+        $profile = json_decode($this->client->get('me/messenger_profile', $options)->getBody()->getContents(), true);
+        if (!empty($profile['data'])) {
+            $response['getStarted'] = $profile['get_started'];
+            $response['greeting'] = $profile['greeting'];
+            $response['iceBreakers'] = $profile['ice_breakers'];
+            $response['persistentMenu'] = $profile['persistent_menu'];
+            $response['whitelistedDomains'] = $profile['whitelisted_domains'];
+            $response['accountLinkingUrl'] = $profile['account_linking_url'];
+            $response['homeUrl'] = $profile['home_url'];
+        }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response;
     }
 
     public function update($data)
     {
+        $response = [];
+
         $options = [
             'query' => [
                 'access_token' => $this->accessToken,
@@ -39,9 +52,18 @@ class Profile extends Messenger
             'json'  => $data,
         ];
 
-        $response = $this->client->post('me/messenger_profile', $options);
+        $profile = json_decode($this->client->post('me/messenger_profile', $options)->getBody()->getContents(), true);
+        if (!empty($profile['data'])) {
+            $response['getStarted'] = $profile['get_started'];
+            $response['greeting'] = $profile['greeting'];
+            $response['iceBreakers'] = $profile['ice_breakers'];
+            $response['persistentMenu'] = $profile['persistent_menu'];
+            $response['whitelistedDomains'] = $profile['whitelisted_domains'];
+            $response['accountLinkingUrl'] = $profile['account_linking_url'];
+            $response['homeUrl'] = $profile['home_url'];
+        }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $response;
     }
 
     public function delete($fields)

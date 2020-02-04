@@ -3,25 +3,46 @@
 namespace App\Http\Controllers\Facebook\Marketing;
 
 use App\Http\Controllers\Facebook\MarketingController;
-use App\Models\Facebook\Marketing\Ad as FacebookAd;
-use App\Models\Facebook\Marketing\AdSet as FacebookAdSet;
+use App\Models\Facebook\Marketing\Ad;
+use App\Models\Facebook\Marketing\AdCreative;
 use Illuminate\Http\Request;
 
 class AdController extends MarketingController
 {
     public function index(Request $request)
     {
-        $this->validate($request, [
-            'accountId' => 'required',
-        ]);
+        if (empty($request->input('accountId')) and empty($request->input('campaignId')) and empty($request->input('adSetId'))) {
+            return response()->json([
+                'code'    => -1,
+                'message' => 'account id, campaign id和adset id不能同时为空',
+            ], 400);
+        }
+
+        $data = [];
+
+        $adSetId = $request->input('adSetId');
+        if (!empty($adSetId)) {
+            $data['adSetId'] = $adSetId;
+        }
+
+        $campaignId = $request->input('campaignId');
+        if (!empty($campaignId)) {
+            $data['campaignId'] = $campaignId;
+        }
+
+        $accountId = $request->input('accountId');
+        if (!empty($accountId)) {
+            $data['accountId'] = $accountId;
+        }
 
         $params = [
-            'before' => $request->input('before', null),
-            'after'  => $request->input('after', null),
-            'limit'  => $request->input('limit', 50),
+            'effective_status' => $request->input('effectiveStatus', []),
+            'before'           => $request->input('before', null),
+            'after'            => $request->input('after', null),
+            'limit'            => $request->input('limit', null),
         ];
 
-        $ads = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->get($request->input('accountId'), $params);
+        $ads = (new Ad($this->appId, $this->appSecret, $this->accessToken))->get($data, $params);
 
         return response()->json($ads);
     }
@@ -29,38 +50,55 @@ class AdController extends MarketingController
     public function create(Request $request)
     {
         $this->validate($request, [
-            'name'             => 'required',
-            'dailyBudget'      => 'required',
-            'bidAmount'        => 'required',
-            'optimizationGoal' => 'required',
-            'billingEvent'     => 'required',
-            'status'           => 'required',
-            'campaignId'       => 'required',
-            'accountId'        => 'required',
+            'accountId' => 'required',
+            'adSetId'   => 'required',
+            'name'      => 'required',
+            'status'    => 'required',
         ]);
 
-        $adCreativeId = '';
+        $accountId = $request->input('accountId');
 
-        $data = [
-            'name'     => $request->input('name'),
-            'creative' => ['creative_id' => $adCreativeId],
-            'status'   => $request->input('status'),
+        $adCreative = (new AdCreative($this->appId, $this->appSecret, $this->accessToken))->create($accountId, [
+            'name'              => 'Test Ad Creative #1',
+            'object_story_spec' => [
+                'page_id'    => '101121868036411',
+//                'link_data'  => [
+//                    'call_to_action' => [
+//                        'type'  => 'LEARN_MORE',
+//                        'value' => ['app_destination' => 'MESSENGER'],
+//                    ],
+//                    'image_hash'     => 'ab5effaba5eca4d4760bc9717e50810e',
+//                    'link'           => 'https://m.me/101121868036411',
+//                    'message'        => 'Welcome message',
+//                ],
+//                'video_data' => [
+//                    'call_to_action'       => [
+//                        'type'  => 'LEARN_MORE',
+//                        'value' => ['app_destination' => 'MESSENGER'],
+//                    ],
+//                    'link_description'     => 'Try it out',
+//                    'image_url'            => 'https://scontent.xx.fbcdn.net/v/t15.5256-10/74717208_2482051165366194_3896844799986106368_n.jpg?_nc_cat=110&_nc_ohc=dB8YOAkelhQAX91pXcR&_nc_ht=scontent.xx&oh=b76ea640b16aff6d1d52fdc295ffbdce&oe=5ED3F42A',
+//                    'page_welcome_message' => 'Welcome message in messenger',
+//                    'video_id'             => '2482051032032874',
+//                ],
+            ],
+        ]);
+
+        dd($adCreative);
+
+        $ad = (new Ad($this->appId, $this->appSecret, $this->accessToken))->create($accountId, [
             'adset_id' => $request->input('adSetId'),
-        ];
-
-//        $params = array(
-//            'creative' => array('creative_id' => '<adCreativeID>'),
-//            'status' => 'PAUSED',
-//        );
-
-        $ad = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->create($request->input('accountId'), $data);
+            'name'     => $request->input('name'),
+            'status'   => $request->input('status'),
+            'creative' => ['creative_id' => $adCreative['id']],
+        ]);
 
         return response()->json($ad);
     }
 
     public function view(string $adId)
     {
-        $ad = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->find($adId);
+        $ad = (new Ad($this->appId, $this->appSecret, $this->accessToken))->find($adId);
 
         return response()->json($ad);
     }
@@ -74,7 +112,7 @@ class AdController extends MarketingController
             $data['name'] = $name;
         }
 
-        $ad = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->update($adId, $data);
+        $ad = (new Ad($this->appId, $this->appSecret, $this->accessToken))->update($adId, $data);
 
         return response()->json($ad);
     }
@@ -83,7 +121,7 @@ class AdController extends MarketingController
     {
         $data = [];
 
-        $ad = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->delete($adId, $data);
+        $ad = (new Ad($this->appId, $this->appSecret, $this->accessToken))->delete($adId, $data);
 
         return response()->json($ad);
     }
@@ -110,7 +148,7 @@ class AdController extends MarketingController
             'limit'           => $request->input('limit', null),
         ];
 
-        $insights = (new FacebookAd($this->appId, $this->appSecret, $this->accessToken))->insight($request->input('accountId'), $params);
+        $insights = (new Ad($this->appId, $this->appSecret, $this->accessToken))->insight($request->input('accountId'), $params);
 
         return response()->json($insights);
     }
