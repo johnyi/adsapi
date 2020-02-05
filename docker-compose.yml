@@ -61,7 +61,13 @@ services:
           - default
         ports:
             - "${REDIS_PORT}:6379"
-
+    adminer:
+        container_name: ${ADMINER_CONTAINER_NAME}
+        image: ${ADMINER_IMAGE_NAME}
+        build:
+            context: ./adminer
+        ports:
+            - "${ADMINER_PORT}:8080"
 networks:
     default:
         driver: bridge
