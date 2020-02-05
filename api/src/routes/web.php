@@ -123,7 +123,7 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
             $router->post('create', 'PageController@create');
         });
 
-        // Page
+        // Account
         $router->group(['prefix' => 'account'], function() use ($router) {
             $router->get('', 'AccountController@index');
         });

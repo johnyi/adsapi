@@ -9,11 +9,23 @@ class PageController extends UserController
 {
     public function index($userId)
     {
-        $response = $this->fb->get(sprintf('/%s/accounts', $userId), $this->accessToken);
+        $response = [];
 
-        return response()->json([
-            'data' => $response->getDecodedBody()['data'],
-        ]);
+        $pages = $this->fb->get(sprintf('/%s/accounts', $userId), $this->accessToken)->getDecodedBody()['data'];
+        if (!empty($pages)) {
+            foreach ($pages as $page) {
+                $response[] = [
+                    'accessToken'  => $page['access_token'],
+                    'category'     => $page['category'],
+                    'categoryList' => $page['category_list'],
+                    'name'         => $page['name'],
+                    'id'           => $page['id'],
+                    'tasks'        => $page['tasks'],
+                ];
+            }
+        }
+
+        return response()->json($response);
     }
 
     public function create(Request $request, $userId)
