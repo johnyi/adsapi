@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class PageController extends UserController
 {
-    public function index()
+    public function index($userId)
     {
-        $response = $this->fb->get(sprintf('/%s/accounts', $this->user['user_id']), $this->accessToken);
+        $response = $this->fb->get(sprintf('/%s/accounts', $userId), $this->accessToken);
 
         return response()->json([
             'data' => $response->getDecodedBody()['data'],
