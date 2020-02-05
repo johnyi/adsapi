@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\FacebookController;
-use App\Models\Page;
+use App\Models\PageAudience;
 use Illuminate\Http\Request;
 
 class PageController extends FacebookController
@@ -23,6 +23,35 @@ class PageController extends FacebookController
         }
 
         $this->accessToken = $page['access_token'];
+    }
+
+    public function audience(Request $request, string $pageId)
+    {
+        $items = [];
+
+        $audiences = PageAudience::where('page_id', '=', $pageId)->orderBy('updated_at', 'DESC')->paginate($request->input('limit', 50));
+
+        foreach ($audiences->items() as $item) {
+            $items[] = [
+                'id'         => $item['id'],
+                'pageId'     => $item['page_id'],
+                'psId'       => $item['ps_id'],
+                'name'       => $item['name'],
+                'firstName'  => $item['first_name'],
+                'lastName'   => $item['last_name'],
+                'profilePic' => $item['profile_pic'],
+                'locale'     => $item['locale'],
+                'timezone'   => $item['timezone'],
+                'gender'     => $item['gender'],
+                'createdAt'  => $item['created_at'],
+                'updatedAt'  => $item['updated_at'],
+            ];
+        }
+
+        return response()->json([
+            'total' => $audiences->total(),
+            'items' => $items,
+        ]);
     }
 
     public function subscribe(string $pageId)
