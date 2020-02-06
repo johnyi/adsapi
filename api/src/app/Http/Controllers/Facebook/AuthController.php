@@ -150,7 +150,7 @@ class AuthController extends Controller
         $this->dispatch(new FacebookUserPageSync($user));
 
         if (array_key_exists('return', $_SESSION) and !empty($_SESSION['return'])) {
-            $return = $_SESSION['return'];
+            $return = sprintf('%s?userId=%s&email=%s', $_SESSION['return'], $user['user_id'], $user['email']);
             unset($_SESSION['return']);
 
             return redirect($return);
