@@ -53,6 +53,16 @@ class FacebookUserPageSync extends Job
                 $page['category'] = $userPage['category'];
                 $page['access_token'] = $userPage['access_token'];
                 $page->save();
+
+                $fields = [
+                    'messages',
+                    'messaging_postbacks',
+                    'message_reads',
+                    'messaging_referrals',
+                    'message_echoes',
+                ];
+
+                $fb->post(sprintf('/%s/subscribed_apps?subscribed_fields=%s', $page['page_id'], implode(',', $fields)), [], $page['access_token']);
             }
         }
     }
