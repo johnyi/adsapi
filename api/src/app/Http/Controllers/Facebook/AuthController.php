@@ -151,9 +151,9 @@ class AuthController extends Controller
 
         if (array_key_exists('return', $_SESSION) and !empty($_SESSION['return'])) {
             if (strpos($_SESSION['return'], '?')) {
-                $return = sprintf('%s&userId=%s&email=%s', $_SESSION['return'], $user['user_id'], $user['email']);
+                $return = sprintf('%s&userId=%s', $_SESSION['return'], $user['user_id']);
             } else {
-                $return = sprintf('%s?userId=%s&email=%s', $_SESSION['return'], $user['user_id'], $user['email']);
+                $return = sprintf('%s?userId=%s', $_SESSION['return'], $user['user_id']);
             }
 
             unset($_SESSION['return']);
