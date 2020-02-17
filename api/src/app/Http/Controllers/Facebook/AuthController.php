@@ -7,6 +7,7 @@ use App\Jobs\Facebook\User\FacebookUserPageSync;
 use App\Models\User;
 use Facebook\Facebook as FB;
 use Illuminate\Http\Request;
+use Log;
 
 class AuthController extends Controller
 {
@@ -94,6 +95,8 @@ class AuthController extends Controller
             $_SESSION['return'] = $return;
         }
 
+        Log::info(json_encode($_SESSION));
+
         return redirect($loginUrl);
     }
 
@@ -148,6 +151,8 @@ class AuthController extends Controller
         $user->save();
 
         $this->dispatch(new FacebookUserPageSync($user));
+
+        Log::info(json_encode($_SESSION));
 
         if (array_key_exists('return', $_SESSION) and !empty($_SESSION['return'])) {
             $return = sprintf('%s?userId=%s&email=%s', $_SESSION['return'], $user['user_id'], $user['email']);
