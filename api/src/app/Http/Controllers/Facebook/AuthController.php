@@ -91,12 +91,9 @@ class AuthController extends Controller
         $loginUrl = $helper->getLoginUrl(url('fb/auth/callback', [], true), $permissions);
 
         $return = $request->input('return');
-        if (empty($return)) {
+        if (!empty($return)) {
             $_SESSION['return'] = $return;
         }
-
-        Log::info($return);
-        Log::info(json_encode($_SESSION));
 
         return redirect($loginUrl);
     }
@@ -152,8 +149,6 @@ class AuthController extends Controller
         $user->save();
 
         $this->dispatch(new FacebookUserPageSync($user));
-
-        Log::info(json_encode($_SESSION));
 
         if (array_key_exists('return', $_SESSION) and !empty($_SESSION['return'])) {
             $return = sprintf('%s?userId=%s&email=%s', $_SESSION['return'], $user['user_id'], $user['email']);
