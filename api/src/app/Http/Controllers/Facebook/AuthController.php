@@ -95,6 +95,7 @@ class AuthController extends Controller
             $_SESSION['return'] = $return;
         }
 
+        Log::info($return);
         Log::info(json_encode($_SESSION));
 
         return redirect($loginUrl);
