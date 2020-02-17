@@ -42,7 +42,7 @@ class FacebookUserPageSync extends Job
         $userPages = $response->getDecodedBody()['data'];
         if (!empty($userPages)) {
             foreach ($userPages as $userPage) {
-                $page = Page::where('page_id', '=', $userPage['id'])->first();
+                $page = Page::where('page_id', '=', $userPage['id'])->where('user_id', '=', $this->user['user_id'])->first();
                 if (empty($page)) {
                     $page = new Page();
                     $page['page_id'] = $userPage['id'];

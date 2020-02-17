@@ -24,4 +24,27 @@ class UserController extends FacebookController
 
         $this->accessToken = $user['access_token'];
     }
+
+    public function index($userId)
+    {
+        $user = User::where('user_id', '=', $userId)->first();
+        if (empty($user)) {
+            return response()->json([
+                'code'    => -1,
+                'message' => 'User not exists',
+            ], 400);
+        }
+
+        return response()->json([
+            'id'        => $user['id'],
+            'userId'    => $user['user_id'],
+            'email'     => $user['email'],
+            'name'      => $user['name'],
+            'firstName' => $user['first_name'],
+            'lastName'  => $user['last_name'],
+            'picture'   => $user['picture'],
+            'gender'    => $user['gender'],
+            'expiresAt' => $user['expires_at'],
+        ]);
+    }
 }

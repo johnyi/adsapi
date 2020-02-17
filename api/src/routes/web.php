@@ -117,6 +117,8 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
 
     // User
     $router->group(['namespace' => 'User', 'prefix' => 'user/{userId}'], function() use ($router) {
+        $router->get('', 'UserController@index');
+
         // Page
         $router->group(['prefix' => 'page'], function() use ($router) {
             $router->get('', 'PageController@index');
