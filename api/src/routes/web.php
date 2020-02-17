@@ -116,17 +116,17 @@ $router->group(['namespace' => 'Facebook', 'prefix' => 'fb'], function() use ($r
     });
 
     // User
-    $router->group(['namespace' => 'User', 'prefix' => 'user/{userId}'], function() use ($router) {
+    $router->group(['prefix' => 'user/{userId}'], function() use ($router) {
         $router->get('', 'UserController@index');
 
         // Page
-        $router->group(['prefix' => 'page'], function() use ($router) {
+        $router->group(['namespace' => 'User', 'prefix' => 'page'], function() use ($router) {
             $router->get('', 'PageController@index');
             $router->post('create', 'PageController@create');
         });
 
         // Account
-        $router->group(['prefix' => 'account'], function() use ($router) {
+        $router->group(['namespace' => 'User', 'prefix' => 'account'], function() use ($router) {
             $router->get('', 'AccountController@index');
         });
     });
