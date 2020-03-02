@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\FacebookController;
+use App\Models\Page;
 use App\Models\PageAudience;
 use Illuminate\Http\Request;
 
