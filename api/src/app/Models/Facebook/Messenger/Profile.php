@@ -29,13 +29,13 @@ class Profile extends Messenger
 
         $profile = json_decode($this->client->get('me/messenger_profile', $options)->getBody()->getContents(), true);
         if (!empty($profile['data'])) {
-            $response['getStarted'] = array_key_exists('get_started') ? $profile['get_started'] : null;
-            $response['greeting'] = array_key_exists('greeting') ? $profile['greeting'] : null;
-            $response['iceBreakers'] = array_key_exists('ice_breakers') ? $profile['ice_breakers'] : null;
-            $response['persistentMenu'] = array_key_exists('persistent_menu') ? $profile['persistent_menu'] : null;
-            $response['whitelistedDomains'] = array_key_exists('whitelisted_domains') ? $profile['whitelisted_domains'] : null;
-            $response['accountLinkingUrl'] = array_key_exists('account_linking_url') ? $profile['account_linking_url'] : null;
-            $response['homeUrl'] = array_key_exists('home_url') ? $profile['home_url'] : null;
+            $response['getStarted'] = array_key_exists('get_started', $profile) ? $profile['get_started'] : null;
+            $response['greeting'] = array_key_exists('greeting', $profile) ? $profile['greeting'] : null;
+            $response['iceBreakers'] = array_key_exists('ice_breakers', $profile) ? $profile['ice_breakers'] : null;
+            $response['persistentMenu'] = array_key_exists('persistent_menu', $profile) ? $profile['persistent_menu'] : null;
+            $response['whitelistedDomains'] = array_key_exists('whitelisted_domains', $profile) ? $profile['whitelisted_domains'] : null;
+            $response['accountLinkingUrl'] = array_key_exists('account_linking_url', $profile) ? $profile['account_linking_url'] : null;
+            $response['homeUrl'] = array_key_exists('home_url', $profile) ? $profile['home_url'] : null;
         }
 
         return $response;
@@ -54,13 +54,13 @@ class Profile extends Messenger
 
         $profile = json_decode($this->client->post('me/messenger_profile', $options)->getBody()->getContents(), true);
         if (!empty($profile['data'])) {
-            $response['getStarted'] = array_key_exists('get_started') ? $profile['get_started'] : null;
-            $response['greeting'] = array_key_exists('greeting') ? $profile['greeting'] : null;
-            $response['iceBreakers'] = array_key_exists('ice_breakers') ? $profile['ice_breakers'] : null;
-            $response['persistentMenu'] = array_key_exists('persistent_menu') ? $profile['persistent_menu'] : null;
-            $response['whitelistedDomains'] = array_key_exists('whitelisted_domains') ? $profile['whitelisted_domains'] : null;
-            $response['accountLinkingUrl'] = array_key_exists('account_linking_url') ? $profile['account_linking_url'] : null;
-            $response['homeUrl'] = array_key_exists('home_url') ? $profile['home_url'] : null;
+            $response['getStarted'] = array_key_exists('get_started', $profile) ? $profile['get_started'] : null;
+            $response['greeting'] = array_key_exists('greeting', $profile) ? $profile['greeting'] : null;
+            $response['iceBreakers'] = array_key_exists('ice_breakers', $profile) ? $profile['ice_breakers'] : null;
+            $response['persistentMenu'] = array_key_exists('persistent_menu', $profile) ? $profile['persistent_menu'] : null;
+            $response['whitelistedDomains'] = array_key_exists('whitelisted_domains', $profile) ? $profile['whitelisted_domains'] : null;
+            $response['accountLinkingUrl'] = array_key_exists('account_linking_url', $profile) ? $profile['account_linking_url'] : null;
+            $response['homeUrl'] = array_key_exists('home_url', $profile) ? $profile['home_url'] : null;
         }
 
         return $response;
