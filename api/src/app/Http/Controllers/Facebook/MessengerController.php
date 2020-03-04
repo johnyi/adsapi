@@ -12,7 +12,11 @@ class MessengerController extends Controller
 
     public function __construct(Request $request)
     {
-        $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->first();
+        $this->validate($request, [
+            'userId' => 'required',
+        ]);
+
+        $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->where('user_id', '=', $request->input('userId'))->first();
         if (empty($page)) {
             return response()->json([
                 'code'    => -1,

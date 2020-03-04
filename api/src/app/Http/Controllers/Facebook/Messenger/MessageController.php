@@ -12,14 +12,13 @@ class MessageController extends MessengerController
 {
     public function index(Request $request)
     {
-        $items = [];
-
         $this->validate($request, [
             'userId' => 'required',
         ]);
 
-        $messages = Message::where('sender_id', '=', $request->input('userId'))->orWhere('recipient_id', '=', $request->input('userId'))->orderBy('timestamp', 'DESC')->paginate($request->input('limit', 50));
+        $items = [];
 
+        $messages = Message::where('sender_id', '=', $request->input('userId'))->orWhere('recipient_id', '=', $request->input('userId'))->orderBy('timestamp', 'DESC')->paginate($request->input('limit', 50));
         foreach ($messages->items() as $item) {
             $attachment = MessageAttachment::where('message_id', '=', $item['message_id'])->get();
 
