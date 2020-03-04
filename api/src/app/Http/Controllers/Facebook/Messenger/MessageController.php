@@ -73,13 +73,15 @@ class MessageController extends MessengerController
                 ], 400);
             }
 
-            dd($url);
-
             if (!empty($url)) {
+                die('url');
                 $response = (new FacebookMessage($this->accessToken))->sendUrl('RESPONSE', $request->input('recipient'), $type, $url);
             } elseif (!empty($attachmentId)) {
+                die('attachment');
                 $response = (new FacebookMessage($this->accessToken))->sendAttachment('RESPONSE', $request->input('recipient'), $type, $attachmentId);
             } else {
+                die('file');
+
                 if (!file_exists(storage_path('app/images/' . $pageId))) {
                     mkdir(storage_path('app/images/' . $pageId));
                 }
