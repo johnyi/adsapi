@@ -73,6 +73,8 @@ class MessageController extends MessengerController
                 ], 400);
             }
 
+            dd($url);
+
             if (!empty($url)) {
                 $response = (new FacebookMessage($this->accessToken))->sendUrl('RESPONSE', $request->input('recipient'), $type, $url);
             } elseif (!empty($attachmentId)) {
