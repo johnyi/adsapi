@@ -13,6 +13,10 @@ class PageController extends FacebookController
 
     public function __construct(Request $request)
     {
+        $this->validate($request, [
+            'userId' => 'required',
+        ]);
+
         parent::__construct();
 
         $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->first();
