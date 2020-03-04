@@ -84,7 +84,7 @@ class MessageController extends MessengerController
 
                 $filePath = $file->storeAs('images/' . $pageId, $file->getClientOriginalName());
 
-                $response = (new FacebookMessage($this->accessToken))->sendAttachment($request->input('recipient'), $type, $filePath);
+                $response = (new FacebookMessage($this->accessToken))->sendFile($request->input('recipient'), $type, $filePath);
             }
         }
 
