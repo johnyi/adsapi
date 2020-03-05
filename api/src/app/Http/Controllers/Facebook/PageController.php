@@ -19,7 +19,7 @@ class PageController extends FacebookController
 
         parent::__construct();
 
-        $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->first();
+        $page = Page::where('page_id', '=', $request->route()[2]['pageId'])->where('user_id', '=', $request->input('userId'))->first();
         if (empty($page)) {
             return response()->json([
                 'code'    => -1,
@@ -35,7 +35,6 @@ class PageController extends FacebookController
         $items = [];
 
         $audiences = PageAudience::where('page_id', '=', $pageId)->orderBy('updated_at', 'DESC')->paginate($request->input('limit', 50));
-
         foreach ($audiences->items() as $item) {
             $items[] = [
                 'id'         => $item['id'],

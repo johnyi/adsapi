@@ -14,7 +14,6 @@ class AttachmentController extends MessengerController
         $items = [];
 
         $attachments = Attachment::where('page_id', '=', $pageId)->orderBy('created_at', 'DESC')->paginate($request->input('limit', 50));
-
         foreach ($attachments->items() as $item) {
             $items[] = [
                 'id'           => $item['id'],
